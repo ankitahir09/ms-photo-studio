@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getApiBaseUrl } from "../utils/apiBase";
 
 function usePhotoData(category) {
   const [photos, setPhotos] = useState([]);
@@ -8,7 +9,11 @@ function usePhotoData(category) {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const res = await fetch(`/api/images/${category}`);
+        const base = getApiBaseUrl();
+        const res = await fetch(`${base}/api/images/${category}`, {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'omit'
+        });
         
         if (!res.ok) {
           if (res.status === 500) {

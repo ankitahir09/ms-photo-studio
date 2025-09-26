@@ -1,4 +1,5 @@
 import React, {useEffect, useState,useRef } from "react";
+import { getApiBaseUrl } from "../utils/apiBase";
 import "./styling/slideshow.css";
 
 function Slideshow() {
@@ -8,7 +9,11 @@ function Slideshow() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await fetch(`/api/images/homeBg`);
+        const base = getApiBaseUrl();
+        const res = await fetch(`${base}/api/images/homeBg`, {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'omit'
+        });
         
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
