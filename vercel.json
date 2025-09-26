@@ -15,5 +15,8 @@
     { "src": "/api/(.*)", "dest": "api/server.js" },
     { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|ttf)", "dest": "$1.$2" },
     { "src": "/(.*)", "dest": "index.html" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
