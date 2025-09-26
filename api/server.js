@@ -1,6 +1,5 @@
 // server.js
 import express from "express";
-import serverless from "serverless-http";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -121,5 +120,4 @@ if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
 }
 
 // ------------------- Export for Vercel -------------------
-export const handler = serverless(app);
 export default app;
