@@ -97,7 +97,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                to="/kidsphotographys"
+                to="/kidsphotography"
                 className="block pt-1 md:px-4 px-2 hover:text-[#C5A880] transition duration-200"
               >
                 Kids Photography
