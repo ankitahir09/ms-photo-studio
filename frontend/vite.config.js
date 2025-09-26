@@ -4,17 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      }
-    }
-  },
+  base: '/', // root path for deployment
   build: {
-    // Performance optimizations
+    outDir: 'dist', // ensure build output goes to 'dist' folder
     rollupOptions: {
       output: {
         manualChunks: {
@@ -25,7 +17,6 @@ export default defineConfig({
         }
       }
     },
-    // Enable compression
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -33,11 +24,19 @@ export default defineConfig({
         drop_debugger: true
       }
     },
-    // Optimize chunk size
     chunkSizeWarningLimit: 1000
   },
-  // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'framer-motion', 'axios']
+  },
+  server: {
+    // Proxy is ONLY for local development
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })
