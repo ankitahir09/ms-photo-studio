@@ -1,0 +1,34 @@
+{
+  "slides": [
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/01catMenu_hycovb.jpg",
+      "title": "wedding PHOTOGRAPHY",
+      "type": "weddingphotos"
+    },
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/01_jfu9mr.jpg",
+      "title": "pre-wedding PHOTOGRAPHY",
+      "type": "prewed"
+    },
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/9R2A4637_COMPRESS_oqx4a7.jpg",
+      "title": "kids PHOTOGRAPHY",
+      "type": "childphotos"
+    },
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/02_mtlkgx.jpg",
+      "title": "engagement PHOTOGRAPHY",
+      "type": "engagephotos"
+    },
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/v1752476355/samples/man-portrait.jpg",
+      "title": "maternity PHOTOGRAPHY",
+      "type": "maternityshoot"
+    },
+    {
+      "image": "https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/01_COMP_vztxut.jpg",
+      "title": "modelling PHOTOGRAPHY",
+      "type": "modellingshoot"
+    }
+  ]
+}

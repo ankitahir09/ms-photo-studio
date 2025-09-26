@@ -1,0 +1,28 @@
+{
+  "name": "Murlidhar Studio - Professional Photography & Videography",
+  "short_name": "Murlidhar Studio",
+  "description": "Professional photography and videography services in Kutch. Wedding photography, pre-wedding shoots, engagement photography, child photography, maternity shoots, and cinematic videos.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["photography", "business", "lifestyle"],
+  "lang": "en",
+  "scope": "/",
+  "id": "murlidhar-studio"
+}

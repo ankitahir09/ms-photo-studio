@@ -1,0 +1,25 @@
+{
+  "name": "photo-studio-mern",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "dev:full": "node dev.js",
+    "dev:api": "node api/server.js",
+    "build": "cd frontend && npm run build",
+    "start": "node api/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.17.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "cloudinary": "^2.7.0",
+    "serverless-http": "^3.2.0",
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "fs": "^0.0.1-security"
+  }
+}
