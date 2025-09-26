@@ -13,7 +13,7 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "api/server.js" },
-    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|ttf)", "dest": "$1.$2" },
-    { "src": "/(.*)", "dest": "index.html" }
+    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|ttf)", "dest": "frontend/dist/$1.$2" },
+    { "src": "/(.*)", "dest": "frontend/dist/index.html" }
   ]
 }
