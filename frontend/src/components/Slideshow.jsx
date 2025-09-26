@@ -5,7 +5,6 @@ function Slideshow() {
   const [images, setImages] = useState([]);
   const slideshowRef = useRef(null);
   
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -29,7 +28,7 @@ function Slideshow() {
     };
 
     fetchImages();
-  }, [baseUrl]);
+  }, []);
 
     useEffect(() => {
     if (images.length === 0) return;
