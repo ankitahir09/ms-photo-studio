@@ -13,11 +13,11 @@
   "routes": [
     {
       "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|ttf|woff2?)",
-      "dest": "/dist/$1.$2"
+      "dest": "/$1.$2"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "dest": "/index.html"
     }
   ]
 }
