@@ -18,10 +18,48 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// ------------------- DB Connection (Serverless-safe) -------------------
+let cachedDb = global.mongooseCachedConnection;
+let cachedPromise = global.mongooseCachedPromise;
+
+async function connectToDatabase() {
+  if (cachedDb && mongoose.connection.readyState === 1) {
+    return cachedDb;
+  }
+  if (!cachedPromise) {
+    cachedPromise = mongoose
+      .connect(process.env.MONGO_URI, {
+        // add options if needed
+      })
+      .then((conn) => {
+        console.log("✅ MongoDB connected (cached)");
+        cachedDb = conn;
+        global.mongooseCachedConnection = conn;
+        return conn;
+      })
+      .catch((err) => {
+        console.error("❌ MongoDB connection error:", err?.message || err);
+        throw err;
+      });
+    global.mongooseCachedPromise = cachedPromise;
+  }
+  return cachedPromise;
+}
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
+
+// Ensure DB is connected for each API request (safe for serverless)
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (e) {
+    res.status(500).json({ error: "Database connection failed", details: e?.message || String(e) });
+  }
+});
 
 // Cloudinary Config
 cloudinary.v2.config({
@@ -40,17 +78,19 @@ app.use("/api/upload", uploadRoute);
 app.use("/api/data", dataRoute);
 app.use("/api/images", imagesRouter);
 
-// ------------------- MongoDB -------------------
-// Connect to MongoDB only if not already connected
-if (mongoose.connection.readyState === 0) {
-  mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB Atlas connected"))
-    .catch((err) => {
-      console.error("❌ MongoDB error", err);
-      console.error("❌ MONGO_URI:", process.env.MONGO_URI ? "Set" : "Not set");
-    });
-}
+// ------------------- Health Check -------------------
+app.get("/api/health", async (req, res) => {
+  try {
+    const state = mongoose.connection.readyState;
+    const env = {
+      hasMongoUri: Boolean(process.env.MONGO_URI),
+      hasCloudinary: Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)
+    };
+    res.json({ ok: true, mongoState: state, env });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e?.message || String(e) });
+  }
+});
 
 
 // ------------------- API -------------------
