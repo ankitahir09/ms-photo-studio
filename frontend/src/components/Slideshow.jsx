@@ -9,7 +9,7 @@ function Slideshow() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/images/homeBg`);
+        const res = await fetch(`/api/images/homeBg`);
         
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
