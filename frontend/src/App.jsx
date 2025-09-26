@@ -21,6 +21,7 @@ import ContactUs from "./components/ContactUs";
 import WorkWithUs from "./components/WorkWithUs";
 import { AnimatePresence, motion } from "framer-motion";
 import Modelling from "./pages/ModellingShoot";
+import Diagnostics from "./pages/Diagnostics";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
           <Route path="/contactus" element={<ContactUs />} />
           <Route path="/modellingshoot" element={<Modelling />} />
           <Route path="/workwithus" element={<WorkWithUs />} />
+          <Route path="/diagnostics" element={<Diagnostics />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <footer>
