@@ -2,13 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["backend/**"]
-      }
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -18,7 +11,13 @@
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/server.js" },
+    { "src": "/api/auth/login", "dest": "/api/auth/login" },
+    { "src": "/api/data/(.*)", "dest": "/api/data/$1" },
+    { "src": "/api/images/(.*)", "dest": "/api/images/$1" },
+    { "src": "/api/upload/upload", "dest": "/api/upload/upload" },
+    { "src": "/api/delete-image", "dest": "/api/delete-image" },
+    { "src": "/api/update-order", "dest": "/api/update-order" },
+    { "src": "/api/health", "dest": "/api/health" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/$1.$2" },
     { "src": "/(.*)", "dest": "/index.html" }
