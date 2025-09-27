@@ -19,7 +19,7 @@ router.get("/:filename", (req, res) => {
     return res.status(400).json({ error: "Invalid file type or path" });
   }
 
-  const filePath = path.join(__dirname, "..", "..", "frontend", "public", "data", fileName);
+  const filePath = path.join(__dirname, "..", "..", "public", "data", fileName);
 
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
