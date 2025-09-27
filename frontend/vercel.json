@@ -7,14 +7,6 @@
       "config": {
         "includeFiles": ["../backend/**"]
       }
-    },
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist",
-        "buildCommand": "npm run build"
-      }
     }
   ],
   "routes": [
