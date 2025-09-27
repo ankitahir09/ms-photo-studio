@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
+import serverless from "serverless-http";
 import { fileURLToPath } from "url";
 import cloudinary from "cloudinary";
 import Image from "../backend/routes/Image.js"; // Mongoose Image model
@@ -160,4 +161,4 @@ if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
 }
 
 // ------------------- Export for Vercel -------------------
-export default app;
+export const handler = serverless(app);
