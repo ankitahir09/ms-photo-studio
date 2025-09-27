@@ -66,7 +66,7 @@ Add these environment variables to your Vercel project settings:
    - `/api/update-order`
    - `/api/health`
 
-## Testing the Deployment
+## Testing the Deploy
 
 1. Visit `/api/test` to verify basic API functionality
 2. Visit `/api/health` to check if the database connection is working
