@@ -20,14 +20,23 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// ------------------- Health Check ------------------- 
+app.get("/api/health", async (req, res) => 
+  { try { 
+    const state = mongoose.connection.readyState; 
+    const env = { hasMongoUri: Boolean(process.env.MONGO_URI),
+       hasCloudinary: Boolean(process.env.CLOUDINARY_CLOUD_NAME
+         && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)
+         }; 
+         res.json({ ok: true, mongoState: state, env }); 
+        } catch (e) { res.status(500).json({ ok: false, error: e?.message || String(e) }); }
+      });
+
 // MongoDB connection
 const connectDB = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.MONGODB_URI);
       console.log("MongoDB connected successfully");
     }
   } catch (error) {

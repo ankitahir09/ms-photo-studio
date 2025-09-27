@@ -3,7 +3,10 @@ import express from "express";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import Image from "./Image.js"; // adjust path if needed
+
+dotenv.config();
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -73,7 +76,7 @@ router.post(
       }
 
       // 🔥 Get all images of this category after upload
-      const allImages = await Image.find({ category }).sort({ order: 1, createdAt: -1 });
+      const allImages = await Image.find({ category }).sort({ order: 1, uploadedAt: -1 });
 
       res.json({
         message: "✅ Uploaded successfully",
