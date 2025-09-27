@@ -68,9 +68,28 @@ Add these environment variables to your Vercel project settings:
 
 ## Testing the Deployment
 
-1. Visit `/api/health` to check if the database connection is working
-2. Test the admin login at `/api/auth/login`
-3. Verify image uploads and retrieval work correctly
+1. Visit `/api/test` to verify basic API functionality
+2. Visit `/api/health` to check if the database connection is working
+3. Test the admin login at `/api/auth/login`
+4. Verify image uploads and retrieval work correctly
+
+## Troubleshooting
+
+### 404 Errors on API Endpoints
+
+If you're getting 404 errors on API endpoints:
+
+1. **Check the deployment logs** in Vercel dashboard
+2. **Verify environment variables** are set correctly
+3. **Test with `/api/test`** endpoint first to verify basic functionality
+4. **Check file structure** - ensure all API files are in the `api/` directory
+
+### Common Issues
+
+- **Environment variables not set**: Make sure all required variables are added in Vercel dashboard
+- **MongoDB connection issues**: Verify your MongoDB URI is correct and accessible
+- **CORS errors**: All endpoints include proper CORS headers
+- **File upload issues**: Ensure Cloudinary credentials are correct
 
 ## Notes
 
