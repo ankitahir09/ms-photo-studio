@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.get("/api/health", async (req, res) => 
   { try { 
     const state = mongoose.connection.readyState; 
-    const env = { hasMongoUri: Boolean(process.env.MONGO_URI),
+     const env = { hasMongoUri: Boolean(process.env.MONGODB_URI),
        hasCloudinary: Boolean(process.env.CLOUDINARY_CLOUD_NAME
          && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)
          }; 
