@@ -12,15 +12,15 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
-        "buildCommand": "npm run build"
+        "distDir": "frontend/dist",
+        "buildCommand": "npm run build --prefix frontend"
       }
     }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "api/server.js" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/$1.$2" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/assets/(.*)", "dest": "/frontend/assets/$1" },
+    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/frontend/dist/$1.$2" },
+    { "src": "/(.*)", "dest": "/frontend/dist/index.html" }
   ]
 }
