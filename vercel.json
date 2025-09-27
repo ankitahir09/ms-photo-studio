@@ -2,6 +2,13 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["backend/**"]
+      }
+    },
+    {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -11,13 +18,8 @@
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|ttf|woff2?)",
-      "dest": "/$1.$2"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/api/(.*)", "dest": "api/server.js" },
+    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/$1.$2" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
