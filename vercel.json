@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": "frontend/dist",
   "builds": [
     {
       "src": "api/server.js",
@@ -21,7 +20,7 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "api/server.js" },
     { "src": "/assets/(.*)", "dest": "/frontend/assets/$1" },
-    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/frontend/dist/$1.$2" },
-    { "src": "/(.*)", "dest": "/frontend/dist/index.html" }
+    { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/frontend/$1.$2" },
+    { "src": "/(.*)", "dest": "/frontend/index.html" }
   ]
 }
