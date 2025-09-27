@@ -11,29 +11,18 @@ const ImageSchema = new mongoose.Schema({
 });
 
 // Use global cache for mongoose connection
-let cachedDb = global.mongooseCachedConnection;
-let cachedPromise = global.mongooseCachedPromise;
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 async function connectToDatabase() {
-  if (cachedDb && mongoose.connection.readyState === 1) {
-    return cachedDb;
+  if (cached.conn) return cached.conn;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI).then((mongoose) => mongoose);
   }
-  if (!cachedPromise) {
-    cachedPromise = mongoose
-      .connect(process.env.MONGO_URI)
-      .then((conn) => {
-        console.log("✅ MongoDB connected (cached)");
-        cachedDb = conn;
-        global.mongooseCachedConnection = conn;
-        return conn;
-      })
-      .catch((err) => {
-        console.error("❌ MongoDB connection error:", err?.message || err);
-        throw err;
-      });
-    global.mongooseCachedPromise = cachedPromise;
-  }
-  return cachedPromise;
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 // Cloudinary config
