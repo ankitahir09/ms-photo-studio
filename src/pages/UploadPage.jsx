@@ -12,7 +12,7 @@ function UploadPage() {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
-  // Token check helpers
+  // Helper to check token expiration
   function isTokenExpired(token) {
     if (!token) return true;
     try {
@@ -23,52 +23,35 @@ function UploadPage() {
     }
   }
 
-  const checkToken = () => {
+  // Token check on mount only
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || isTokenExpired(token)) {
       localStorage.removeItem("token");
       navigate("/admin");
     }
-  };
-
-  useEffect(() => {
-    checkToken();
-    const interval = setInterval(checkToken, 2000);
-    return () => clearInterval(interval);
   }, [navigate]);
 
-  // Fetch images function
-  const fetchImages = async () => {
+  // Fetch uploaded images whenever category changes
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    try {
-      const res = await fetch(`/api/images/${category}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data && data.success && data.images) {
-        setUploadedImages(data.images);
-      } else {
-        setUploadedImages([]);
-      }
-    } catch {
-      setUploadedImages([]);
-    }
-  };
-
-  // Fetch images on mount and when category changes
-  useEffect(() => {
-    fetchImages();
+    fetch(`/api/images/${category}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && data.images) setUploadedImages(data.images);
+        else setUploadedImages([]);
+      })
+      .catch(() => setUploadedImages([]));
   }, [category]);
 
-  // File selection
   const handleFiles = (e) => setImages(Array.from(e.target.files));
 
-  // Upload handler
   const handleUpload = async () => {
-    const fileInput = document.getElementById("fileInput");
-    if (!fileInput.files || fileInput.files.length === 0) {
+    if (!images.length) {
       alert("Please select a file before proceeding.");
       return;
     }
@@ -97,8 +80,7 @@ function UploadPage() {
         } else {
           formData.append("images", img);
         }
-      } catch (error) {
-        console.error("Compression error:", error);
+      } catch {
         formData.append("images", img);
       }
     }
@@ -115,15 +97,14 @@ function UploadPage() {
     alert(data.message || "Upload Complete");
     setImages([]);
     setUploading(false);
-    fetchImages(); // ✅ Refetch latest images
+    setUploadedImages(data.images || []);
   };
 
-  // Delete handler
   const handleDeleteUploaded = async (public_id) => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    await fetch(`/api/delete-image`, {
+    const res = await fetch(`/api/delete-image`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -132,12 +113,13 @@ function UploadPage() {
       body: JSON.stringify({ public_id, category }),
     });
 
-    fetchImages(); // ✅ Refetch latest images
+    const data = await res.json();
+    setUploadedImages(data.images || []);
   };
 
-  // Drag and drop
   const onDragEnd = async (result) => {
     if (!result.destination) return;
+
     const reordered = Array.from(uploadedImages);
     const [moved] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, moved);
