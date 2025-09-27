@@ -26,6 +26,7 @@
     { "src": "/api/images", "dest": "/api/images" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)\\.(js|css|png|jpg|svg|ico|txt|json|woff2|ttf)", "dest": "/$1.$2" },
-    { "src": "/((?!api).*)", "dest": "/index.html" }
+    { "src": "/((?!api).*)", "dest": "/index.html" },
+    { "src": "/api/test-api", "dest": "/api/test-api" }
   ]
 }
