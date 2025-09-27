@@ -23,6 +23,14 @@ const app = express();
 let cachedDb = global.mongooseCachedConnection;
 let cachedPromise = global.mongooseCachedPromise;
 
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    message: "✅ Serverless backend is working!",
+    timestamp: new Date().toISOString()
+  });
+});
+
 async function connectToDatabase() {
   if (cachedDb && mongoose.connection.readyState === 1) {
     return cachedDb;
