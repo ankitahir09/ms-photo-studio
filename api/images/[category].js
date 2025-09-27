@@ -57,6 +57,11 @@ export default async function handler(req, res) {
     await connectToDatabase();
     
     const { category } = req.query;
+    console.log("[images API] category received:", category);
+
+    if (!category) {
+      return res.status(400).json({ error: "Missing category in query params" });
+    }
 
     // Check if database is connected
     if (mongoose.connection.readyState !== 1) {
@@ -68,7 +73,8 @@ export default async function handler(req, res) {
 
     const Image = mongoose.models.Image || mongoose.model("Image", ImageSchema);
     const images = await Image.find({ category }).sort({ order: 1, uploadedAt: -1 });
-    
+    console.log(`[images API] found ${images.length} images for category:`, category);
+
     // Always return JSON, even if empty array
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({
