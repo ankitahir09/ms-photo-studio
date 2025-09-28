@@ -110,8 +110,7 @@ function Slideshow() {
         <img
           key={image.public_id || index}
           src={
-            `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${img.public_id}
-` || image.url
+            `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${image.public_id}` || image.url
           }
           id="slideshowimg"
           alt={`Professional photography by Murlidhar Studio - Slide ${
