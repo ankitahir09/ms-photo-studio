@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     // Verify token
     verifyToken(req, res, async () => {
       // Use multer to parse the request
-      upload.array("images", 10)(req, res, async (err) => {
+      upload.fields([{ name: "images", maxCount: 10 }, { name: "category", maxCount: 1 }])(req, res, async (err) => {
         if (err) {
           console.error("Multer error:", err);
           return res.status(400).json({ error: "File upload error" });
