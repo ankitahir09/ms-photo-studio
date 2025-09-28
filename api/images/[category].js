@@ -64,12 +64,7 @@ export default async function handler(req, res) {
 
     // Always return JSON, even if empty array
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).json({
-      success: true,
-      category: category,
-      count: images.length,
-      images: images
-    });
+    res.status(200).json(images);
   } catch (err) {
     console.error("Error fetching images:", err);
     res.status(500).json({ error: "Failed to fetch images", details: err.message });
