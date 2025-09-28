@@ -106,9 +106,15 @@ function Slideshow() {
     };
   }, [images]);
 
-  if (loading) {
-    return <div className="slideshow">Loading images...</div>;
-  }
+ // Inside Slideshow component:
+
+if (loading) {
+  return (
+    <div className="slideshow">
+      <div className="skeleton" aria-label="Loading images" />
+    </div>
+  );
+}
 
   if (error) {
     return <div className="slideshow">Error: {error}</div>;
