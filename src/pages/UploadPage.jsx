@@ -220,7 +220,6 @@ function UploadPage() {
                           <img
                             loading="lazy"
                             src={
-                              img.url ||
                               `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${img.public_id}`
                             }
                             alt=""
