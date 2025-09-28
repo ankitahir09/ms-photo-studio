@@ -220,7 +220,7 @@ function UploadPage() {
                           <img
                             loading="lazy"
                             src={
-                              `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_700/${img.public_id}`
+                              `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_500/${img.public_id}`
                             }
                             alt=""
                             className="w-20 h-20 object-cover rounded"
