@@ -33,21 +33,24 @@ function UploadPage() {
   }, [navigate]);
 
   // Fetch uploaded images whenever category changes
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) return;
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  fetch(`/api/images/${category}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      // use data directly if it's an array
-      setUploadedImages(Array.isArray(data) ? data : []);
+    fetch(`/api/images/${category}`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .catch(() => setUploadedImages([]));
-}, [category]);
-
+      .then((res) => res.json())
+      .then((data) => {
+        // use data directly if it's an array
+        if (data && data.success && Array.isArray(data.images)) {
+          setUploadedImages(data.images);
+        } else {
+          setUploadedImages([]);
+        }
+      })
+      .catch(() => setUploadedImages([]));
+  }, [category]);
 
   const handleFiles = (e) => setImages(Array.from(e.target.files));
 
