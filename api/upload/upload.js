@@ -101,7 +101,7 @@ export default async function handler(req, res) {
           const uploadedImages = [];
           const Image = mongoose.models.Image || mongoose.model("Image", ImageSchema);
 
-          for (let file of req.files) {
+          for (let file of req.files.images || []) {
             const result = await new Promise((resolve, reject) => {
               cloudinary.uploader.upload_stream(
                 {
