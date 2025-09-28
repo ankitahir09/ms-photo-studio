@@ -10,7 +10,7 @@ function Slideshow() {
     const fetchImages = async () => {
       try {
         const base = getApiBaseUrl();
-        const res = await fetch(`${base}/api/images/homeBg`, {
+        const res = await fetch(`${base}/api/images/images?homeBg`, {
           headers: { 'Accept': 'application/json' },
           credentials: 'omit'
         });
