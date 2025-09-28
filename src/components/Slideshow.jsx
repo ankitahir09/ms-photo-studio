@@ -4,10 +4,14 @@ import "./styling/slideshow.css";
 
 function Slideshow() {
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const slideshowRef = useRef(null);
 
   useEffect(() => {
     const fetchImages = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const base = getApiBaseUrl();
         const res = await fetch(`${base}/api/images/images?category=homeBg`, {
@@ -30,7 +34,10 @@ function Slideshow() {
         setImages(imageArray);
       } catch (err) {
         console.error("Failed to load background images:", err);
+        setError(err.message || "Unknown error");
         setImages([]); // Set empty array on error
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -99,7 +106,14 @@ function Slideshow() {
     };
   }, [images]);
 
-  // Don't render if no images
+  if (loading) {
+    return <div className="slideshow">Loading images...</div>;
+  }
+
+  if (error) {
+    return <div className="slideshow">Error: {error}</div>;
+  }
+
   if (!images || images.length === 0) {
     return <div className="slideshow">No images available</div>;
   }
@@ -109,20 +123,12 @@ function Slideshow() {
       {images.map((image, index) => (
         <img
           key={image.public_id || index}
-          src={
-            `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${image.public_id}` || image.url
-          }
+          src={`https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${image.public_id}`}
           id="slideshowimg"
-          alt={`Professional photography by Murlidhar Studio - Slide ${
-            index + 1
-          }`}
+          alt={`Professional photography by Murlidhar Studio - Slide ${index + 1}`}
         />
       ))}
-      <div
-        className="controls"
-        role="tablist"
-        aria-label="Slideshow navigation"
-      >
+      <div className="controls" role="tablist" aria-label="Slideshow navigation">
         {images.map((_, index) => (
           <button
             className="ctrlbtn"
