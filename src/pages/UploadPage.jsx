@@ -33,24 +33,29 @@ function UploadPage() {
   }, [navigate]);
 
   // Fetch uploaded images whenever category changes
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-    fetch(`/api/images/${category}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // use data directly if it's an array
-        if (data && data.success && Array.isArray(data.images)) {
-          setUploadedImages(data.images);
-        } else {
-          setUploadedImages([]);
-        }
-      })
-      .catch(() => setUploadedImages([]));
-  }, [category]);
+  const fetchImages = async () => {
+    try {
+      const res = await fetch(`/api/images/${category}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.images)) {
+        setUploadedImages(data.images);
+      } else {
+        setUploadedImages([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch images:", err);
+      setUploadedImages([]);
+    }
+  };
+
+  fetchImages();
+}, [category]);
 
   const handleFiles = (e) => setImages(Array.from(e.target.files));
 
@@ -213,7 +218,7 @@ function UploadPage() {
                         >
                           <img
                             loading="lazy"
-                            src={`https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${img.public_id}`}
+                            src={img.url ||`https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${img.public_id}`}
                             alt=""
                             className="w-20 h-20 object-cover rounded"
                           />
