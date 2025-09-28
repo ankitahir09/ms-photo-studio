@@ -1,3 +1,4 @@
+// [category].js //
 import mongoose from "mongoose";
 
 // Image Schema
@@ -42,8 +43,9 @@ export default async function handler(req, res) {
   try {
     // Connect to database
     await connectToDatabase();
-    
+    console.log("req.query:", req.query);
     const { category } = req.query;
+    
     console.log("[images API] category received:", category);
 
     if (!category) {
