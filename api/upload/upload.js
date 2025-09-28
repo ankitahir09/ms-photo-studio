@@ -21,7 +21,9 @@ if (!cached) {
 async function connectToDatabase() {
   if (cached.conn) return cached.conn;
   if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGO_URI).then((mongoose) => mongoose);
+    cached.promise = mongoose
+      .connect(process.env.MONGO_URI)
+      .then((mongoose) => mongoose);
   }
   cached.conn = await cached.promise;
   return cached.conn;
@@ -65,17 +67,17 @@ export const config = {
 
 export default async function handler(req, res) {
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
@@ -85,59 +87,68 @@ export default async function handler(req, res) {
     // Verify token
     verifyToken(req, res, async () => {
       // Use multer to parse the request
-      upload.fields([{ name: "images", maxCount: 10 }, { name: "category", maxCount: 1 }])(req, res, async (err) => {
-        if (err) {
-          console.error("Multer error:", err);
-          return res.status(400).json({ error: "File upload error" });
-        }
-
-        console.log("Upload route hit");
-        const category = req.body.category;
-        if (!category) {
-          return res.status(400).json({ error: "No category is selected" });
-        }
-
-        try {
-          const uploadedImages = [];
-          const Image = mongoose.models.Image || mongoose.model("Image", ImageSchema);
-
-          for (let file of req.files.images || []) {
-            const result = await new Promise((resolve, reject) => {
-              cloudinary.uploader.upload_stream(
-                {
-                  folder: "murlidhar-studio",
-                },
-                (error, result) => {
-                  if (error) reject(error);
-                  else resolve(result);
-                }
-              ).end(file.buffer);
-            });
-
-            const newImage = new Image({
-              public_id: result.public_id,
-              url: result.secure_url,
-              category,
-            });
-            await newImage.save();
-            uploadedImages.push(newImage);
+      upload.fields([{ name: "images", maxCount: 10 }])(
+        req,
+        res,
+        async (err) => {
+          if (err) {
+            console.error("Multer error:", err);
+            return res.status(400).json({ error: "File upload error" });
           }
 
-          // Get all images of this category after upload
-          const allImages = await Image.find({ category }).sort({ order: 1, uploadedAt: -1 });
+          console.log("Upload route hit");
+          const category = req.body.category;
+          if (!category) {
+            return res.status(400).json({ error: "No category is selected" });
+          }
 
-          res.json({
-            message: "✅ Uploaded successfully",
-            images: allImages,
-          });
-        } catch (err) {
-          console.error(err);
-          res.status(500).json({ error: "Failed to upload images" });
+          try {
+            const uploadedImages = [];
+            const Image =
+              mongoose.models.Image || mongoose.model("Image", ImageSchema);
+
+            const files = req.files?.images || []; // ✅ multer stores files here
+
+            for (let file of files) {
+              const result = await new Promise((resolve, reject) => {
+                cloudinary.uploader
+                  .upload_stream(
+                    { folder: "murlidhar-studio" },
+                    (error, result) => {
+                      if (error) reject(error);
+                      else resolve(result);
+                    }
+                  )
+                  .end(file.buffer);
+              });
+
+              const newImage = new Image({
+                public_id: result.public_id,
+                url: result.secure_url,
+                category,
+              });
+              await newImage.save();
+              uploadedImages.push(newImage);
+            }
+
+            const allImages = await Image.find({ category }).sort({
+              order: 1,
+              uploadedAt: -1,
+            });
+
+            res.json({
+              message: "✅ Uploaded successfully",
+              images: allImages,
+            });
+          } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to upload images" });
+          }
         }
-      });
+      );
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error("Upload error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
