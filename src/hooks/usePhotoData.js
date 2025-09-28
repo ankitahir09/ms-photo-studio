@@ -10,7 +10,7 @@ function usePhotoData(category) {
     const fetchPhotos = async () => {
       try {
         const base = getApiBaseUrl();
-        const res = await fetch(`${base}/api/images/${category}`, {
+        const res = await fetch(`${base}/api/images/images?category=${category}`, {
           headers: { 'Accept': 'application/json' },
           credentials: 'omit'
         });
