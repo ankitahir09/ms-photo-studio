@@ -1,30 +1,32 @@
-import React, {useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getApiBaseUrl } from "../utils/apiBase";
 import "./styling/slideshow.css";
 
 function Slideshow() {
   const [images, setImages] = useState([]);
   const slideshowRef = useRef(null);
-  
+
   useEffect(() => {
     const fetchImages = async () => {
       try {
         const base = getApiBaseUrl();
         const res = await fetch(`${base}/api/images/images?category=homeBg`, {
-          headers: { 'Accept': 'application/json' },
-          credentials: 'omit'
+          headers: { Accept: "application/json" },
+          credentials: "omit",
         });
-        
+
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-        
+
         const data = await res.json();
-        console.log('API Response:', data); // Debug log
-        
+        console.log("API Response:", data); // Debug log
+
         // Ensure data is an array
-        const imageArray = Array.isArray(data) ? data : (data?.images || data?.data || []);
-        console.log('Processed images array:', imageArray); // Debug log
+        const imageArray = Array.isArray(data)
+          ? data
+          : data?.images || data?.data || [];
+        console.log("Processed images array:", imageArray); // Debug log
         setImages(imageArray);
       } catch (err) {
         console.error("Failed to load background images:", err);
@@ -35,7 +37,7 @@ function Slideshow() {
     fetchImages();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (images.length === 0) return;
 
     const slides = slideshowRef.current.querySelectorAll("#slideshowimg");
@@ -105,12 +107,26 @@ function Slideshow() {
   return (
     <div className="slideshow" ref={slideshowRef}>
       {images.map((image, index) => (
-        <img key={image.public_id || index} src={image.url} id="slideshowimg" alt={`Professional photography by Murlidhar Studio - Slide ${index + 1}`} />
+        <img
+          key={image.public_id || index}
+          src={
+            `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${img.public_id}
+` || image.url
+          }
+          id="slideshowimg"
+          alt={`Professional photography by Murlidhar Studio - Slide ${
+            index + 1
+          }`}
+        />
       ))}
-      <div className="controls" role="tablist" aria-label="Slideshow navigation">
+      <div
+        className="controls"
+        role="tablist"
+        aria-label="Slideshow navigation"
+      >
         {images.map((_, index) => (
-          <button 
-            className="ctrlbtn" 
+          <button
+            className="ctrlbtn"
             key={index}
             role="tab"
             aria-label={`Go to slide ${index + 1}`}
