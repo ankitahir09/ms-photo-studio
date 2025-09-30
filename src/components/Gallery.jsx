@@ -12,6 +12,8 @@ const Gallery = ({ photos, loading, error }) => {
   const [preloadedImages, setPreloadedImages] = useState(new Set());
   const [visibleImages, setVisibleImages] = useState(new Set());
   const observerRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     if (isPreviewOpen) {
@@ -28,13 +30,14 @@ const Gallery = ({ photos, loading, error }) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = parseInt(entry.target.dataset.index);
-            setVisibleImages(prev => new Set([...prev, index]));
+            setVisibleImages((prev) => new Set([...prev, index]));
+            observer.unobserve(entry.target); // unobserve after visible for performance
           }
         });
       },
       {
-        rootMargin: '100px', // Load images 100px before they come into view
-        threshold: 0.1
+        rootMargin: "100px",
+        threshold: 0.1,
       }
     );
 
@@ -43,44 +46,76 @@ const Gallery = ({ photos, loading, error }) => {
   }, []);
 
   const handleImageLoad = useCallback((publicId) => {
-    setLoadedImages(prev => new Set([...prev, publicId]));
+    setLoadedImages((prev) => new Set([...prev, publicId]));
   }, []);
 
   const handleImageError = useCallback((publicId) => {
-    setImageErrors(prev => new Set([...prev, publicId]));
+    setImageErrors((prev) => new Set([...prev, publicId]));
   }, []);
 
   // Preload adjacent images for faster navigation
-  const preloadAdjacentImages = useCallback((currentIndex) => {
-    if (!photos || photos.length === 0) return;
+  const preloadAdjacentImages = useCallback(
+    (currentIndex) => {
+      if (!photos || photos.length === 0) return;
 
-    const preloadIndexes = [
-      currentIndex - 1,
-      currentIndex + 1,
-      currentIndex - 2,
-      currentIndex + 2
-    ].filter(index => index >= 0 && index < photos.length);
+      const preloadIndexes = [
+        currentIndex - 1,
+        currentIndex + 1,
+        currentIndex - 2,
+        currentIndex + 2,
+      ].filter((index) => index >= 0 && index < photos.length);
 
-    preloadIndexes.forEach(index => {
-      const photo = photos[index];
-      if (photo && !preloadedImages.has(photo.public_id)) {
-        const img = new Image();
-        img.onload = () => {
-          setPreloadedImages(prev => new Set([...prev, photo.public_id]));
-        };
-        img.src = photo.url;
-      }
-    });
-  }, [photos, preloadedImages]);
+      preloadIndexes.forEach((index) => {
+        const photo = photos[index];
+        if (photo && !preloadedImages.has(photo.public_id)) {
+          const img = new Image();
+          img.onload = () => {
+            setPreloadedImages((prev) => new Set([...prev, photo.public_id]));
+          };
+          img.src = photo.url || `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${photo.public_id}`;
+        }
+      });
+    },
+    [photos, preloadedImages]
+  );
 
-  // All state and variables must be declared before any early returns
+  // Masonry breakpoint config
   const breakpointColumnsObj = {
     default: 3,
     1024: 2,
     600: 1,
   };
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [zoom, setZoom] = useState(1);
+
+  const openModal = (index) => {
+    setActiveIndex(index);
+    setZoom(1); // reset zoom on open
+    preloadAdjacentImages(index);
+    setIsPreviewOpen(true);
+  };
+
+  const closeModal = () => {
+    setActiveIndex(null);
+    setIsPreviewOpen(false);
+  };
+
+  const prevImage = () => {
+    setActiveIndex((prev) => {
+      const newIndex = prev > 0 ? prev - 1 : prev;
+      if (newIndex !== prev) preloadAdjacentImages(newIndex);
+      return newIndex;
+    });
+  };
+
+  const nextImage = () => {
+    setActiveIndex((prev) => {
+      const newIndex = prev < photos.length - 1 ? prev + 1 : prev;
+      if (newIndex !== prev) preloadAdjacentImages(newIndex);
+      return newIndex;
+    });
+  };
+
+  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
+  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
 
   if (loading) {
     return (
@@ -107,8 +142,8 @@ const Gallery = ({ photos, loading, error }) => {
               <li>Missing environment variables</li>
             </ul>
           </div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Retry
@@ -126,41 +161,6 @@ const Gallery = ({ photos, loading, error }) => {
     );
   }
 
-  const openModal = (index) => {
-    setActiveIndex(index);
-    setZoom(1); // reset zoom on open
-    preloadAdjacentImages(index); // Preload adjacent images for faster navigation
-  };
-
-  const closeModal = () => {
-    setActiveIndex(null);
-    closePreview();
-  };
-  const prevImage = () => {
-    setActiveIndex((prev) => {
-      const newIndex = prev > 0 ? prev - 1 : prev;
-      if (newIndex !== prev) {
-        preloadAdjacentImages(newIndex);
-      }
-      return newIndex;
-    });
-  };
-  
-  const nextImage = () => {
-    setActiveIndex((prev) => {
-      const newIndex = prev < photos.length - 1 ? prev + 1 : prev;
-      if (newIndex !== prev) {
-        preloadAdjacentImages(newIndex);
-      }
-      return newIndex;
-    });
-  };
-  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
-  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
-
-  const openPreview = () => setIsPreviewOpen(true);
-  const closePreview = () => setIsPreviewOpen(false);
-
   return (
     <>
       <div className="py-4">
@@ -170,20 +170,18 @@ const Gallery = ({ photos, loading, error }) => {
           columnClassName="space-y-4"
         >
           {photos.map((photo, index) => {
-            const optimizedUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${photo.public_id}`;
+            const optimizedUrl =
+              photo.url ||
+              `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${photo.public_id}`;
             const isLoaded = loadedImages.has(photo.public_id);
             const hasError = imageErrors.has(photo.public_id);
             const isVisible = visibleImages.has(index);
-            const isPreloaded = preloadedImages.has(photo.public_id);
-            
+
             return (
               <div
                 key={photo.public_id}
                 className="break-inside-avoid overflow-hidden shadow-sm cursor-pointer relative"
-                onClick={() => {
-                  openModal(index);
-                  openPreview();
-                }}
+                onClick={() => openModal(index)}
                 data-index={index}
                 ref={(el) => {
                   if (el && observerRef.current) {
@@ -201,19 +199,23 @@ const Gallery = ({ photos, loading, error }) => {
                     <p>Failed to load</p>
                   </div>
                 )}
-                {isVisible && (
+                {isVisible ? (
                   <img
                     src={optimizedUrl}
-                    alt={photo.title || `Professional photography by Murlidhar Studio - Image ${index + 1}`}
+                    alt={
+                      photo.title ||
+                      `Professional photography by Murlidhar Studio - Image ${
+                        index + 1
+                      }`
+                    }
                     className={`w-full h-auto object-cover transition-all duration-300 hover:scale-105 ${
-                      isLoaded ? 'opacity-100' : 'opacity-0'
+                      isLoaded ? "opacity-100" : "opacity-0"
                     }`}
                     loading="lazy"
                     onLoad={() => handleImageLoad(photo.public_id)}
                     onError={() => handleImageError(photo.public_id)}
                   />
-                )}
-                {!isVisible && (
+                ) : (
                   <div className="w-full h-64 bg-gray-200 animate-pulse"></div>
                 )}
               </div>
@@ -227,6 +229,7 @@ const Gallery = ({ photos, loading, error }) => {
           <button
             onClick={closeModal}
             className="absolute z-50 top-4 right-4 text-white text-3xl font-bold"
+            aria-label="Close preview"
           >
             &times;
           </button>
@@ -235,22 +238,29 @@ const Gallery = ({ photos, loading, error }) => {
             onClick={prevImage}
             disabled={activeIndex === 0}
             className="absolute left-4 z-50 text-white text-4xl font-bold font-sans leading-none"
+            aria-label="Previous image"
           >
-            <img src={arrowLeft} className="w-10 h-10" alt="left" />
+            <img src={arrowLeft} className="w-10 h-10" alt="Previous" />
           </button>
 
           <div className="max-w-full max-h-full p-4">
             <img
               src={photos[activeIndex].url}
-              alt={photos[activeIndex].title || `Professional photography by Murlidhar Studio - Image ${activeIndex + 1}`}
+              alt={
+                photos[activeIndex].title ||
+                `Professional photography by Murlidhar Studio - Image ${
+                  activeIndex + 1
+                }`
+              }
               className="max-h-[80svh] max-w-[90vw] mx-auto"
               style={{
                 transform: `scale(${zoom})`,
                 transition: "transform 0.3s",
               }}
               onLoad={() => {
-                // Mark as preloaded when it loads
-                setPreloadedImages(prev => new Set([...prev, photos[activeIndex].public_id]));
+                setPreloadedImages((prev) =>
+                  new Set([...prev, photos[activeIndex].public_id])
+                );
               }}
             />
           </div>
@@ -259,28 +269,27 @@ const Gallery = ({ photos, loading, error }) => {
             onClick={nextImage}
             disabled={activeIndex === photos.length - 1}
             className="absolute right-4 z-50 text-white text-4xl font-bold font-sans leading-none"
+            aria-label="Next image"
           >
-            <img src={arrowRight} className="w-10 h-10" alt="right" />
+            <img src={arrowRight} className="w-10 h-10" alt="Next" />
           </button>
 
           {/* Zoom Controls */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
-            {/* Zoom Out Button */}
             <button
               onClick={zoomOut}
               className="w-9 h-9 flex items-center justify-center bg-white/20 text-white rounded-full"
               aria-label="Zoom Out"
             >
-              <img src={minusCircle} alt="zoom out" />
+              <img src={minusCircle} alt="Zoom out" />
             </button>
 
-            {/* Zoom In Button */}
             <button
               onClick={zoomIn}
               className="w-9 h-9 flex items-center justify-center bg-white/20 text-white rounded-full"
               aria-label="Zoom In"
             >
-              <img src={plusCircle} alt="zoom in" />
+              <img src={plusCircle} alt="Zoom in" />
             </button>
           </div>
         </div>
