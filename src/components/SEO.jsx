@@ -59,16 +59,18 @@ const SEO = ({
           "url": "https://murlidharstudio.com",
           "logo": "https://murlidharstudio.com/logo.png",
           "image": fullImageUrl,
-          "telephone": "+91-XXXXXXXXXX",
+          "telephone": "+91-9979912805",
           "address": {
             "@type": "PostalAddress",
             "addressCountry": "IN",
-            "addressLocality": "Your City",
-            "addressRegion": "Your State"
+            "addressLocality": "Anjar",
+            "addressRegion": "Gujarat",
+            "postalCode": "370110",
+            "streetAddress": "413/D, Laxmi Tokiz, Khatri bazar, Ganga Naka, Anjar, Kutch"
           },
           "sameAs": [
-            "https://www.instagram.com/murlidharstudio",
-            "https://www.facebook.com/murlidharstudio"
+            "https://www.instagram.com/murlidhar_studio_official",
+            "https://www.facebook.com/murlidhar.studio.official/"
           ],
           "serviceArea": {
             "@type": "GeoCircle",
