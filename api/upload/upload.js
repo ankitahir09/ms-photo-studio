@@ -96,8 +96,6 @@ export default async function handler(req, res) {
             console.error("Multer error:", err);
             return res.status(400).json({ error: "File upload error" });
           }
-
-          console.log("Upload route hit");
           const category = req.body.category;
           if (!category) {
             return res.status(400).json({ error: "No category is selected" });

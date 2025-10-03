@@ -24,13 +24,11 @@ function Slideshow() {
         }
 
         const data = await res.json();
-        console.log("API Response:", data); // Debug log
 
         // Ensure data is an array
         const imageArray = Array.isArray(data)
           ? data
           : data?.images || data?.data || [];
-        console.log("Processed images array:", imageArray); // Debug log
         setImages(imageArray);
       } catch (err) {
         console.error("Failed to load background images:", err);

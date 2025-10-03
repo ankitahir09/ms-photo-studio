@@ -29,7 +29,6 @@ export const CategoryMenu = ({ slides }) => {
           1024: { slidesPerView: 3 },
         }}
         pagination={{ clickable: true }}
-        onSlideChange={() => console.log("slide change")}
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.image}>
@@ -38,6 +37,7 @@ export const CategoryMenu = ({ slides }) => {
                 className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 filter group-hover:brightness-80"
                 src={slide.image}
                 alt={slide.title}
+                loading="lazy"
               />
 
               {/* Gradient Overlay */}
