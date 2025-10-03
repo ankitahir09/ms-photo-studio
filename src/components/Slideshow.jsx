@@ -138,7 +138,7 @@ if (loading) {
       {images.map((image, index) => (
         <img
           key={image.public_id || index}
-          src={`https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${image.public_id}`}
+          src={`https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1500/${image.public_id}`}
           id="slideshowimg"
           alt={`Professional photography by Murlidhar Studio - Slide ${index + 1}`}
         />
