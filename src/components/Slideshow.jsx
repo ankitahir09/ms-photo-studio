@@ -8,39 +8,50 @@ function Slideshow() {
   const [error, setError] = useState(null);
   const slideshowRef = useRef(null);
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const base = getApiBaseUrl();
-        const res = await fetch(`${base}/api/images/images?category=homeBg`, {
-          headers: { Accept: "application/json" },
-          credentials: "omit",
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        // Ensure data is an array
-        const imageArray = Array.isArray(data)
-          ? data
-          : data?.images || data?.data || [];
-        setImages(imageArray);
-      } catch (err) {
-        console.error("Failed to load background images:", err);
-        setError(err.message || "Unknown error");
-        setImages([]); // Set empty array on error
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  const fetchWithRetry = async (url, options, retries = 2, delay = 1000) => {
+    try {
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res;
+    } catch (err) {
+      if (retries > 0) {
+        await new Promise((res) => setTimeout(res, delay));
+        return fetchWithRetry(url, options, retries - 1, delay);
+      } else {
+        throw err;
       }
-    };
+    }
+  };
 
-    fetchImages();
-  }, []);
+  const fetchImages = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const base = getApiBaseUrl();
+      const res = await fetchWithRetry(`${base}/api/images/images?category=homeBg`, {
+        headers: { Accept: "application/json" },
+        credentials: "omit",
+      });
+      
+      const data = await res.json();
+
+      const imageArray = Array.isArray(data)
+        ? data
+        : data?.images || data?.data || [];
+      setImages(imageArray);
+    } catch (err) {
+      console.error("Failed to load background images:", err);
+      setError(err.message || "Unknown error");
+      setImages([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchImages();
+}, []);
+
 
   useEffect(() => {
     if (images.length === 0) return;

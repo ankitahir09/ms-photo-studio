@@ -6,7 +6,7 @@ import { categoryData } from "../components/categoryData.jsx";
 import SEO from "../components/SEO.jsx";
 
 const PreWedVideos = () => {
- const { photos, loading, error } = usePhotoData("prewedphotos");
+ const { photos, loading, error } = usePhotoData("prewedvideos");
   const data = categoryData.prewedvideos;
   return (
     <>
