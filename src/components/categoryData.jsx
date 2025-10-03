@@ -27,7 +27,7 @@ export const categoryData = {
     maternity: {
     title: "Maternity Shoot",
     description: "Motherhood is a beautiful journey filled with love, hope, and emotions beyond words. At Murlidhar Studio, we capture the glow of expecting mothers, the bond of parents-to-be, and the joy of new beginnings. Every frame reflects tenderness and elegance, creating timeless memories you\u2019ll cherish for a lifetime.",
-    src: "9R2A4637_COMPRESS_oqx4a7.jpg"
+    src: "10_10000_wr0njm.jpg"
   },
     prewedvideos: {
     title: "Prewedding Videos",
