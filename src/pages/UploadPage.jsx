@@ -34,29 +34,45 @@ function UploadPage() {
 
   // Fetch uploaded images whenever category changes
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const fetchWithRetry = async (url, options, retries = 2, delay = 1000) => {
+    try {
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res;
+    } catch (err) {
+      if (retries > 0) {
+        await new Promise((r) => setTimeout(r, delay));
+        return fetchWithRetry(url, options, retries - 1, delay);
+      } else {
+        throw err;
+      }
+    }
+  };
 
-    const fetchImages = async () => {
-      try {
-        const res = await fetch(`/api/images/images?category=${category}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-        const data = await res.json();
-        if (data && data.success && Array.isArray(data.images)) {
-          setUploadedImages(data.images);
-        } else {
-          setUploadedImages([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch images:", err);
+  const fetchImages = async () => {
+    try {
+      const res = await fetchWithRetry(`/api/images/images?category=${category}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      if (data && data.success && Array.isArray(data.images)) {
+        setUploadedImages(data.images);
+      } else {
         setUploadedImages([]);
       }
-    };
+    } catch (err) {
+      console.error("Failed to fetch images:", err);
+      setUploadedImages([]);
+    }
+  };
 
-    fetchImages();
-  }, [category]);
+  fetchImages();
+}, [category]);
 
   const handleFiles = (e) => setImages(Array.from(e.target.files));
 
