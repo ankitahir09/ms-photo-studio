@@ -42,6 +42,6 @@ export const categoryData = {
   kidvideos: {
     title: "Kids Video Gallery",
     description: "The cutest smiles and happiest giggles deserve to be cherished forever. At Murlidhar Studio, we capture the pure joy, innocence, and magical expressions of your little ones in motion. From playful laughter to heart-warming cuddles, every kids\u2019 video is crafted with love so you can relive these priceless memories for years to come. Childhood is fleeting—and we make it unforgettable.",
-    src: "ndmwgcqivh3w0auesgzo.jpg"
+    src: "9R2A4637_COMPRESS_oqx4a7.jpg"
   },
 };
