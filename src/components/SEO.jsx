@@ -18,15 +18,20 @@ const SEO = ({
     <Helmet>
       {/* Basic Meta Tags */}
       <title>{title}</title>
+      <meta name="application-name" content="Murlidhar Studio" />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content="Murlidhar Studio" />
       <meta name="robots" content={robots} />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      
+
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
-      
+
+      {/* Favicon (extra reinforcement for Google) */}
+      <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      <link rel="apple-touch-icon" href="/favicon.ico" />
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
@@ -37,27 +42,27 @@ const SEO = ({
       <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content="en_US" />
-      
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={fullUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImageUrl} />
-      
+
       {/* Additional SEO Tags */}
       <meta name="theme-color" content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
-      
+
       {/* Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "PhotographyBusiness",
+          "@type": ["Organization", "LocalBusiness"],
           "name": "Murlidhar Studio",
           "description": "Professional photography and videography services",
           "url": "https://murlidharstudio.com",
-          "logo": "https://murlidharstudio.com/logo.png",
+          "logo": "https://murlidharstudio.com/favicon.ico",
           "image": fullImageUrl,
           "telephone": "+91-9979912805",
           "address": {
@@ -71,16 +76,7 @@ const SEO = ({
           "sameAs": [
             "https://www.instagram.com/murlidhar_studio_official",
             "https://www.facebook.com/murlidhar.studio.official/"
-          ],
-          "serviceArea": {
-            "@type": "GeoCircle",
-            "geoMidpoint": {
-              "@type": "GeoCoordinates",
-              "latitude": "28.6139",
-              "longitude": "77.2090"
-            },
-            "geoRadius": "100000"
-          }
+          ]
         })}
       </script>
     </Helmet>
