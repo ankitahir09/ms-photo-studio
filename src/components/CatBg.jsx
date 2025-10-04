@@ -11,13 +11,13 @@ const CatBg = ({ data }) => {
   const [animateTitle, setAnimateTitle] = useState(false);
 
   // Auto-retry handler for img loading errors
-  const handleImgError = (e, src, maxRetries = 2) => {
+  const handleImgError = (e, src, maxRetries = 4) => {
     if (!e.target._retryCount) e.target._retryCount = 0;
     if (e.target._retryCount < maxRetries) {
       e.target._retryCount += 1;
       setTimeout(() => {
         e.target.src = src + `?retry=${Math.random()}`; // force reload with unique query
-      }, 500);
+      }, 300);
     }
   };
 
