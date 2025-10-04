@@ -3,12 +3,23 @@ import SlideIn from "./Animate";
 
 const CatBg = ({ data }) => {
   const srcMain = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_80,w_800,dpr_auto/${data.src}`;
-  const srcBg = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_10,w_200,dpr_auto/${data.src}`;
+  const srcBg = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_10,w_100,dpr_auto/${data.src}`;
 
   const [mainLoaded, setMainLoaded] = useState(false);
   const [bgLoaded, setBgLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [animateTitle, setAnimateTitle] = useState(false);
+
+  // Auto-retry handler for img loading errors
+  const handleImgError = (e, src, maxRetries = 2) => {
+    if (!e.target._retryCount) e.target._retryCount = 0;
+    if (e.target._retryCount < maxRetries) {
+      e.target._retryCount += 1;
+      setTimeout(() => {
+        e.target.src = src + `?retry=${Math.random()}`; // force reload with unique query
+      }, 500);
+    }
+  };
 
   // Trigger animation after both images are loaded
   useEffect(() => {
@@ -26,15 +37,17 @@ const CatBg = ({ data }) => {
       {/* Hidden preloaders for tracking */}
       <img
         src={srcBg}
-        alt=""
+        alt="Background low-quality preview"
         className="hidden"
         onLoad={() => setBgLoaded(true)}
+        onError={(e) => handleImgError(e, srcBg)}
       />
       <img
         src={srcMain}
-        alt=""
+        alt="Main category banner"
         className="hidden"
         onLoad={() => setMainLoaded(true)}
+        onError={(e) => handleImgError(e, srcMain)}
       />
 
       {/* Loading screen */}
@@ -72,8 +85,9 @@ const CatBg = ({ data }) => {
             <div className="md:col-span-7 w-full h-64 md:h-auto">
               <img
                 src={srcMain}
-                alt=""
+                alt={data.title}
                 className="w-full h-full object-cover object-center"
+                onError={(e) => handleImgError(e, srcMain)}
               />
             </div>
             <div className="md:hidden md:col-span-5 bg-white/90 opacity-70 p-6 flex flex-col justify-center text-black">
