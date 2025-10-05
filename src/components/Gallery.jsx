@@ -49,28 +49,27 @@ const Gallery = ({ photos, loading, error }) => {
     setLoadedImages((prev) => new Set([...prev, publicId]));
   }, []);
 
-const handleImageError = useCallback((publicId, retryCount = 0) => {
-  if (retryCount < 3) {
-    const img = new Image();
-    const retryUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,c_fill,w_1200/${publicId}?retry=${Date.now()}`;
-    img.src = retryUrl;
-    img.onload = () => {
-      // If retry succeeds, mark as loaded and remove from error set
-      setLoadedImages((prev) => new Set([...prev, publicId]));
-      setImageErrors((prev) => {
-        const updated = new Set(prev);
-        updated.delete(publicId);
-        return updated;
-      });
-    };
-    img.onerror = () => {
-      setTimeout(() => handleImageError(publicId, retryCount + 1), 400);
-    };
-  } else {
-    setImageErrors((prev) => new Set([...prev, publicId]));
-  }
-}, []);
-
+  const handleImageError = useCallback((publicId, retryCount = 0) => {
+    if (retryCount < 3) {
+      const img = new Image();
+      const retryUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,c_fill,w_1200/${publicId}?retry=${Date.now()}`;
+      img.src = retryUrl;
+      img.onload = () => {
+        // If retry succeeds, mark as loaded and remove from error set
+        setLoadedImages((prev) => new Set([...prev, publicId]));
+        setImageErrors((prev) => {
+          const updated = new Set(prev);
+          updated.delete(publicId);
+          return updated;
+        });
+      };
+      img.onerror = () => {
+        setTimeout(() => handleImageError(publicId, retryCount + 1), 400);
+      };
+    } else {
+      setImageErrors((prev) => new Set([...prev, publicId]));
+    }
+  }, []);
 
   // Preload adjacent images for faster navigation
   const preloadAdjacentImages = useCallback(
@@ -91,7 +90,9 @@ const handleImageError = useCallback((publicId, retryCount = 0) => {
           img.onload = () => {
             setPreloadedImages((prev) => new Set([...prev, photo.public_id]));
           };
-          img.src = photo.url || `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${photo.public_id}`;
+          img.src =
+            photo.url ||
+            `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_webp,q_80,c_fill,w_1200/${photo.public_id}`;
         }
       });
     },
@@ -151,7 +152,9 @@ const handleImageError = useCallback((publicId, retryCount = 0) => {
     return (
       <div className="min-h-[100svh] flex items-center justify-center">
         <div className="text-center p-8 max-w-md">
-          <div className="text-red-500 text-xl mb-4">⚠️ Error Loading Photos</div>
+          <div className="text-red-500 text-xl mb-4">
+            ⚠️ Error Loading Photos
+          </div>
           <div className="text-gray-600 mb-4">{error}</div>
           <div className="text-sm text-gray-500">
             <p>This might be because:</p>
@@ -230,7 +233,8 @@ const handleImageError = useCallback((publicId, retryCount = 0) => {
                     className={`w-full h-auto object-cover transition-all duration-300 hover:scale-105 ${
                       isLoaded ? "opacity-100" : "opacity-0"
                     }`}
-                    loading="lazy"
+                    decoding="async"
+                    fetchpriority="high"
                     onLoad={() => handleImageLoad(photo.public_id)}
                     onError={() => handleImageError(photo.public_id)}
                   />
@@ -277,8 +281,8 @@ const handleImageError = useCallback((publicId, retryCount = 0) => {
                 transition: "transform 0.3s",
               }}
               onLoad={() => {
-                setPreloadedImages((prev) =>
-                  new Set([...prev, photos[activeIndex].public_id])
+                setPreloadedImages(
+                  (prev) => new Set([...prev, photos[activeIndex].public_id])
                 );
               }}
             />
