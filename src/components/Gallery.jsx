@@ -49,9 +49,28 @@ const Gallery = ({ photos, loading, error }) => {
     setLoadedImages((prev) => new Set([...prev, publicId]));
   }, []);
 
-  const handleImageError = useCallback((publicId) => {
+const handleImageError = useCallback((publicId, retryCount = 0) => {
+  if (retryCount < 3) {
+    const img = new Image();
+    const retryUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,w_1200/${publicId}?retry=${Date.now()}`;
+    img.src = retryUrl;
+    img.onload = () => {
+      // If retry succeeds, mark as loaded and remove from error set
+      setLoadedImages((prev) => new Set([...prev, publicId]));
+      setImageErrors((prev) => {
+        const updated = new Set(prev);
+        updated.delete(publicId);
+        return updated;
+      });
+    };
+    img.onerror = () => {
+      setTimeout(() => handleImageError(publicId, retryCount + 1), 400);
+    };
+  } else {
     setImageErrors((prev) => new Set([...prev, publicId]));
-  }, []);
+  }
+}, []);
+
 
   // Preload adjacent images for faster navigation
   const preloadAdjacentImages = useCallback(
