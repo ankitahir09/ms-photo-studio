@@ -52,7 +52,7 @@ const Gallery = ({ photos, loading, error }) => {
   const handleImageError = useCallback((publicId, retryCount = 0) => {
     if (retryCount < 3) {
       const img = new Image();
-      const retryUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_auto,q_auto,c_fill,w_1200/${publicId}?retry=${Date.now()}`;
+      const retryUrl = `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_70,q_auto,c_fill,w_1200/${publicId}?retry=${Date.now()}`;
       img.src = retryUrl;
       img.onload = () => {
         // If retry succeeds, mark as loaded and remove from error set
@@ -193,8 +193,7 @@ const Gallery = ({ photos, loading, error }) => {
         >
           {photos.map((photo, index) => {
             const optimizedUrl =
-              photo.url ||
-              `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_webp,q_80,c_fill,w_900/${photo.public_id}`;
+              `https://res.cloudinary.com/dkmv3uyvz/image/upload/f_webp,q_80,c_fill,w_800/${photo.public_id}`;
             const isLoaded = loadedImages.has(photo.public_id);
             const hasError = imageErrors.has(photo.public_id);
             const isVisible = visibleImages.has(index);
