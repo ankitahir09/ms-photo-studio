@@ -29,8 +29,10 @@ const SEO = ({
       <link rel="canonical" href={fullUrl} />
 
       {/* Favicon (extra reinforcement for Google) */}
-      <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-      <link rel="apple-touch-icon" href="/favicon.ico" />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="/favicon.ico" />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
