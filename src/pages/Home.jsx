@@ -47,7 +47,7 @@ function Home() {
             </h2>
             <p>
               Pre-wedding shoots reflect your love story before the vows.{" "}
-              <a href="/prewedphotos" className="underline text-[#B8860B]">
+              <a href="/prewed" className="underline text-[#B8860B]">
                 Pre-wedding Photography in Kutch
               </a>{" "}
               blends emotions with cinematic artistry.
