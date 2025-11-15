@@ -167,18 +167,28 @@ function VideoUploadPage() {
         throw new Error(errorMessage);
       }
 
-      const { signature, cloudName, apiKey, folder } = await signatureRes.json();
+      const { signature, cloudName, apiKey, folder, resource_type } = await signatureRes.json();
 
       // Step 2: Upload directly to Cloudinary
       // IMPORTANT: FormData fields must match the signature parameters exactly
       // The order doesn't matter, but all signed parameters must be included
+      // FIX: Use the timestamp from the response (as string) to match signature
       const cloudinaryFormData = new FormData();
       cloudinaryFormData.append("file", video);
       cloudinaryFormData.append("api_key", apiKey);
-      cloudinaryFormData.append("timestamp", timestamp.toString()); // Ensure it's a string
+      cloudinaryFormData.append("timestamp", timestamp.toString()); // Must be string in FormData
       cloudinaryFormData.append("signature", signature);
       cloudinaryFormData.append("folder", folder);
-      cloudinaryFormData.append("resource_type", "video");
+      cloudinaryFormData.append("resource_type", resource_type || "video");
+      
+      // Debug: Log what we're sending (remove in production)
+      console.log("Upload params:", {
+        api_key: apiKey,
+        timestamp: timestamp.toString(),
+        signature: signature.substring(0, 10) + "...", // Only show first 10 chars
+        folder,
+        resource_type: resource_type || "video",
+      });
 
       const xhr = new XMLHttpRequest();
 
@@ -262,11 +272,13 @@ function VideoUploadPage() {
           } catch (parseErr) {
             // If response is not JSON, use status-based message
             if (xhr.status === 401) {
-              errorMessage = "Unauthorized: Invalid Cloudinary credentials or signature";
+              errorMessage = `Unauthorized (401): Invalid Cloudinary credentials or signature. 
+                Check: 1) API key matches, 2) Signature is correct, 3) Timestamp is valid, 4) All parameters match signature. 
+                Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             } else if (xhr.status === 400) {
-              errorMessage = "Bad request: Invalid upload parameters";
+              errorMessage = `Bad request (400): Invalid upload parameters. Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             } else {
-              errorMessage = `Upload failed with status ${xhr.status}`;
+              errorMessage = `Upload failed with status ${xhr.status}. Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             }
           }
           setMessage({

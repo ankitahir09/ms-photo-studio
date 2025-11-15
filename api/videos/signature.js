@@ -66,17 +66,19 @@ export default async function handler(req, res) {
       // IMPORTANT: Only include parameters that will be sent in the upload request
       // Parameters must include: api_key, timestamp, folder, resource_type
       // Note: 'file' is NOT included in signature calculation
+      // FIX: Ensure timestamp is a number (not string) for signature calculation
       const params = {
         api_key: apiKey,
-        timestamp: timestamp.toString(), // Ensure timestamp is a string
+        timestamp: timestamp, // Keep as number for signature calculation
         folder: folderPath,
         resource_type: resourceType,
       };
 
       // Sort parameters alphabetically and create string
+      // FIX: Convert all values to strings when building the signature string
       const paramsString = Object.keys(params)
         .sort()
-        .map((key) => `${key}=${params[key]}`)
+        .map((key) => `${key}=${String(params[key])}`)
         .join("&");
       
       // Generate SHA1 hash with API secret appended
@@ -84,13 +86,18 @@ export default async function handler(req, res) {
         .createHash("sha1")
         .update(paramsString + process.env.CLOUDINARY_API_SECRET)
         .digest("hex");
+      
+      // Debug logging (remove in production)
+      console.log("Signature params:", paramsString);
+      console.log("Generated signature:", signature);
 
       res.json({
         signature,
-        timestamp,
+        timestamp: timestamp.toString(), // Send as string to frontend
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-        apiKey: apiKey,
+        apiKey: apiKey, // SECURITY NOTE: API key is safe to expose (not the secret)
         folder: folderPath,
+        resource_type: resourceType,
       });
     });
   } catch (error) {
