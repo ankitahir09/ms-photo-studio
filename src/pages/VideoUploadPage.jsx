@@ -81,15 +81,13 @@ function VideoUploadPage() {
       return;
     }
 
-    // Check file type
+    // Validate file type - only allow MP4, MOV, AVI as specified
     const validTypes = [
       "video/mp4",
-      "video/quicktime",
-      "video/x-msvideo",
-      "video/webm",
-      "video/ogg",
+      "video/quicktime", // MOV files
+      "video/x-msvideo", // AVI files
     ];
-    const validExtensions = [".mp4", ".mov", ".avi", ".webm", ".ogg"];
+    const validExtensions = [".mp4", ".mov", ".avi"];
     const fileExtension = "." + file.name.split(".").pop().toLowerCase();
 
     if (
@@ -98,7 +96,7 @@ function VideoUploadPage() {
     ) {
       setMessage({
         type: "error",
-        text: "Invalid file type. Please upload MP4, MOV, AVI, WEBM, or OGG files.",
+        text: "Invalid file type. Please upload MP4, MOV, or AVI files only.",
       });
       setVideo(null);
       e.target.value = "";
@@ -139,56 +137,47 @@ function VideoUploadPage() {
     setMessage({ type: "", text: "" });
 
     try {
-      // Step 1: Get Cloudinary upload signature from backend
-      const timestamp = Math.round(new Date().getTime() / 1000);
-      const signatureRes = await fetch("/api/videos/signature", {
+      // Step 1: Get Cloudinary upload preset configuration from backend
+      // This uses unsigned upload preset "videos" - no signature needed
+      const presetRes = await fetch("/api/videos/signature-unsigned", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          timestamp,
           folder: "murlidhar-studio/videos",
         }),
       });
 
-      if (!signatureRes.ok) {
-        let errorMessage = "Failed to get upload signature";
+      if (!presetRes.ok) {
+        let errorMessage = "Failed to get upload preset configuration";
         try {
-          const error = await signatureRes.json();
-          // Fix React Error #31: Ensure error is a string
+          const error = await presetRes.json();
           errorMessage = error?.error 
             ? (typeof error.error === 'string' ? error.error : String(error.error))
             : errorMessage;
         } catch (parseErr) {
-          errorMessage = `Failed to get signature: ${signatureRes.status} ${signatureRes.statusText}`;
+          errorMessage = `Failed to get preset: ${presetRes.status} ${presetRes.statusText}`;
         }
         throw new Error(errorMessage);
       }
 
-      const { signature, cloudName, apiKey, folder, resource_type } = await signatureRes.json();
+      const { cloudName, uploadPreset, folder } = await presetRes.json();
 
-      // Step 2: Upload directly to Cloudinary
-      // IMPORTANT: FormData fields must match the signature parameters exactly
-      // The order doesn't matter, but all signed parameters must be included
-      // CRITICAL: All parameter values must be strings in FormData
+      // Step 2: Upload directly to Cloudinary using unsigned preset
+      // No signature, timestamp, or API key needed - just the preset name
       const cloudinaryFormData = new FormData();
       cloudinaryFormData.append("file", video);
-      cloudinaryFormData.append("api_key", String(apiKey)); // Ensure string
-      cloudinaryFormData.append("timestamp", String(timestamp)); // Must be string
-      cloudinaryFormData.append("signature", String(signature)); // Ensure string
-      cloudinaryFormData.append("folder", String(folder)); // Ensure string
-      cloudinaryFormData.append("resource_type", String(resource_type || "video")); // Ensure string
+      cloudinaryFormData.append("upload_preset", uploadPreset); // This enables unsigned uploads
+      cloudinaryFormData.append("folder", folder); // Optional: override preset folder if needed
+      cloudinaryFormData.append("resource_type", "video"); // Ensure video resource type
       
       // Debug: Log what we're sending (check browser console)
-      console.log("=== Cloudinary Upload Debug ===");
+      console.log("=== Cloudinary Unsigned Upload Debug ===");
       console.log("Cloud name:", cloudName);
-      console.log("API key:", apiKey);
-      console.log("Timestamp:", timestamp.toString());
-      console.log("Signature (first 10):", signature.substring(0, 10) + "...");
+      console.log("Upload preset:", uploadPreset);
       console.log("Folder:", folder);
-      console.log("Resource type:", resource_type || "video");
       console.log("File name:", video.name);
       console.log("File size:", (video.size / 1024 / 1024).toFixed(2), "MB");
 
@@ -274,11 +263,11 @@ function VideoUploadPage() {
           } catch (parseErr) {
             // If response is not JSON, use status-based message
             if (xhr.status === 401) {
-              errorMessage = `Unauthorized (401): Invalid Cloudinary credentials or signature. 
-                Check: 1) API key matches, 2) Signature is correct, 3) Timestamp is valid, 4) All parameters match signature. 
+              errorMessage = `Unauthorized (401): Invalid upload preset or Cloudinary configuration. 
+                Check: 1) Upload preset "videos" exists and is unsigned, 2) Cloud name is correct, 3) Preset allows video uploads. 
                 Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             } else if (xhr.status === 400) {
-              errorMessage = `Bad request (400): Invalid upload parameters. Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
+              errorMessage = `Bad request (400): Invalid upload parameters or file type. Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             } else {
               errorMessage = `Upload failed with status ${xhr.status}. Response: ${xhr.responseText?.substring(0, 200) || 'No response text'}`;
             }
@@ -300,7 +289,8 @@ function VideoUploadPage() {
         setUploadProgress(0);
       });
 
-      // Upload to Cloudinary
+      // Upload to Cloudinary using unsigned preset endpoint
+      // Endpoint format: https://api.cloudinary.com/v1_1/<cloud_name>/video/upload
       xhr.open(
         "POST",
         `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
@@ -387,7 +377,7 @@ function VideoUploadPage() {
             </select>
             <input
               type="file"
-              accept="video/mp4,video/quicktime,video/x-msvideo,video/webm,video/ogg,.mp4,.mov,.avi,.webm,.ogg"
+              accept="video/mp4,video/quicktime,video/x-msvideo,.mp4,.mov,.avi"
               onChange={handleFile}
               id="videoInput"
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"

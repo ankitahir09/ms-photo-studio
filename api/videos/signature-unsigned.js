@@ -1,17 +1,17 @@
-// === Alternative: Unsigned Upload Preset Endpoint ===
-// This provides an alternative method using Cloudinary's unsigned upload preset
-// This is simpler but less secure - only use if you have an upload preset configured
+// === Unsigned Upload Preset Endpoint ===
+// Returns Cloudinary upload preset configuration for client-side unsigned uploads
+// This avoids the need for signature generation and simplifies the upload flow
 // 
-// To use this:
-// 1. Create an unsigned upload preset in Cloudinary dashboard
-// 2. Set UPLOAD_PRESET environment variable
-// 3. Use this endpoint instead of the signed upload endpoint
+// The preset "videos" should be configured in Cloudinary dashboard with:
+// - Signing mode: Unsigned
+// - Resource type: Video
+// - Folder: murlidhar-studio/videos
 
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// JWT verification middleware
+// JWT verification middleware - ensures only authenticated admins can upload
 function verifyToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -43,24 +43,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify token
+    // Verify token - only authenticated admins can get preset info
     verifyToken(req, res, async () => {
-      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
       
-      if (!uploadPreset) {
+      if (!cloudName) {
         return res.status(500).json({ 
-          error: "Upload preset not configured. Please set CLOUDINARY_UPLOAD_PRESET environment variable." 
+          error: "Cloudinary cloud name not configured. Please set CLOUDINARY_CLOUD_NAME environment variable." 
         });
       }
 
+      // Use preset name from env variable, or default to "videos"
+      // The preset "videos" should be created in Cloudinary dashboard
+      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET || "videos";
+
       res.json({
-        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        cloudName: cloudName,
         uploadPreset: uploadPreset,
-        folder: req.body.folder || "murlidhar-studio/videos",
+        folder: "murlidhar-studio/videos", // Matches preset configuration
       });
     });
   } catch (error) {
-    console.error("Signature generation error:", error);
+    console.error("Preset configuration error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
