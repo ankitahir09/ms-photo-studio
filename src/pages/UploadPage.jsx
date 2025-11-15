@@ -178,7 +178,15 @@ function UploadPage() {
       {uploading && <FullscreenLoader />}
       <div className="p-4 max-w-xl mx-auto space-y-4">
         <div>
-          <h2 className="text-xl font-semibold mb-2">Upload Images</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Upload Images</h2>
+            <button
+              className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+              onClick={() => navigate("/upload-video")}
+            >
+              Upload Videos
+            </button>
+          </div>
           <select
             className="border p-2 rounded"
             value={category}

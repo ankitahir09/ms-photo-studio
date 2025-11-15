@@ -7,6 +7,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import AdminPage from "./pages/AdminPage";
 import UploadPage from "./pages/UploadPage";
+import VideoUploadPage from "./pages/VideoUploadPage";
 import Home from "./pages/Home";
 import PreWedding from "./pages/PreWedding";
 import WeddingPhotography from "./pages/WeddingPhotography";
@@ -45,7 +46,9 @@ function App() {
 
 
   const isAdminRoute =
-    location.pathname === "/admin" || location.pathname === "/upload";
+    location.pathname === "/admin" || 
+    location.pathname === "/upload" || 
+    location.pathname === "/upload-video";
   return !isAdminRoute ? (
     <>
       <AnimatePresence>
@@ -86,6 +89,7 @@ function App() {
     <Routes>
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/upload" element={<UploadPage />} />
+      <Route path="/upload-video" element={<VideoUploadPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
