@@ -5,6 +5,7 @@ import FullscreenLoader from "../components/FullscreenLoader";
 
 function VideoUploadPage() {
   const [video, setVideo] = useState(null);
+  const [category, setCategory] = useState("kidvideos");
   const [uploadedVideos, setUploadedVideos] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -31,7 +32,7 @@ function VideoUploadPage() {
     }
   }, [navigate]);
 
-  // Fetch uploaded videos on mount
+  // Fetch uploaded videos whenever category changes
   useEffect(() => {
     const fetchWithRetry = async (url, options, retries = 2, delay = 1000) => {
       try {
@@ -53,7 +54,7 @@ function VideoUploadPage() {
 
     const fetchVideos = async () => {
       try {
-        const res = await fetchWithRetry(`/api/videos`, {
+        const res = await fetchWithRetry(`/api/videos?category=${category}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -71,7 +72,7 @@ function VideoUploadPage() {
     };
 
     fetchVideos();
-  }, []);
+  }, [category]);
 
   const handleFile = (e) => {
     const file = e.target.files[0];
@@ -139,6 +140,7 @@ function VideoUploadPage() {
 
     const formData = new FormData();
     formData.append("video", video);
+    formData.append("category", category);
 
     try {
       const xhr = new XMLHttpRequest();
@@ -209,7 +211,7 @@ function VideoUploadPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ public_id }),
+        body: JSON.stringify({ public_id, category }),
       });
 
       const data = await res.json();
@@ -241,6 +243,15 @@ function VideoUploadPage() {
           </div>
 
           <div className="space-y-3">
+            <select
+              className="border p-2 rounded w-full"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="kidvideos">kids videos</option>
+              <option value="cinvideos">cinematic videos</option>
+              <option value="prewedvideos">prewedding videos</option>
+            </select>
             <input
               type="file"
               accept="video/mp4,video/quicktime,video/x-msvideo,video/webm,video/ogg,.mp4,.mov,.avi,.webm,.ogg"

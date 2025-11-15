@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Gallery from "../components/Gallery";
-import {usePhotoData} from "../hooks/usePhotoData.js";
+import React from "react";
+import VideoGallery from "../components/VideoGallery";
+import { useVideoData } from "../hooks/useVideoData.js";
 import CatBg from "../components/CatBg";
 import { categoryData } from "../components/categoryData.jsx";
 import SEO from "../components/SEO.jsx";
 
 const CinematicVideos = () => {
-  const { photos, loading, error } = usePhotoData("cinvideos");
+  const { videos, loading, error } = useVideoData("cinvideos");
   const data = categoryData.cinvideos;
   return (
     <>
@@ -20,7 +20,7 @@ const CinematicVideos = () => {
 
 
       <section className="min-h-[60svh] ">
-        <Gallery photos={photos} loading={loading} error={error} />
+        <VideoGallery videos={videos} loading={loading} error={error} />
       </section>
 
     </>

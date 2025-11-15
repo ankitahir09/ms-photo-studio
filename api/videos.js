@@ -15,6 +15,7 @@ import mongoose from "mongoose";
 const VideoSchema = new mongoose.Schema({
   public_id: { type: String, required: true, index: true, unique: true },
   url: { type: String, required: true },
+  category: { type: String, required: true, index: true },
   uploadedAt: { type: Date, default: Date.now },
 });
 
@@ -123,10 +124,16 @@ export default async function handler(req, res) {
   try {
     await connectToDatabase();
 
-    // GET /api/videos - Fetch all videos
+    // GET /api/videos - Fetch videos (optionally filtered by category)
     if (req.method === "GET") {
-      // Verify token for GET requests too
-      verifyToken(req, res, async () => {
+      // GET requests don't require authentication for public viewing
+      // But we'll check if token is provided for admin access
+      const authHeader = req.headers["authorization"];
+      const hasToken = authHeader && authHeader.startsWith("Bearer ");
+
+      // If no token, allow public access (for frontend pages)
+      // If token provided, verify it
+      const handleGet = async () => {
         try {
           if (mongoose.connection.readyState !== 1) {
             return res.status(500).json({
@@ -137,10 +144,16 @@ export default async function handler(req, res) {
 
           const Video =
             mongoose.models.Video || mongoose.model("Video", VideoSchema);
-          const videos = await Video.find().sort({ uploadedAt: -1 });
+          
+          const { category } = req.query;
+          
+          // Build query
+          const query = category ? { category } : {};
+          const videos = await Video.find(query).sort({ uploadedAt: -1 });
 
           res.status(200).json({
             success: true,
+            category: category || null,
             count: videos.length,
             videos,
           });
@@ -151,7 +164,13 @@ export default async function handler(req, res) {
             details: err.message,
           });
         }
-      });
+      };
+
+      if (hasToken) {
+        verifyToken(req, res, handleGet);
+      } else {
+        handleGet();
+      }
       return;
     }
 
@@ -174,6 +193,11 @@ export default async function handler(req, res) {
 
           if (!req.file) {
             return res.status(400).json({ error: "No video file provided" });
+          }
+
+          const category = req.body.category;
+          if (!category) {
+            return res.status(400).json({ error: "No category is selected" });
           }
 
           // Validate file size again (in bytes)
@@ -205,20 +229,21 @@ export default async function handler(req, res) {
                 .end(req.file.buffer);
             });
 
-            // Save to MongoDB
+            // Save to MongoDB with category
             const newVideo = new Video({
               public_id: result.public_id,
               url: result.secure_url,
+              category,
             });
             await newVideo.save();
 
-            // Fetch all videos
-            const allVideos = await Video.find().sort({ uploadedAt: -1 });
+            // Fetch videos for the same category
+            const categoryVideos = await Video.find({ category }).sort({ uploadedAt: -1 });
 
             res.json({
               message: "✅ Video uploaded successfully",
               success: true,
-              videos: allVideos,
+              videos: categoryVideos,
             });
           } catch (err) {
             console.error("Upload error:", err);
@@ -232,7 +257,7 @@ export default async function handler(req, res) {
 
       // DELETE /api/videos - Delete video
       if (req.method === "DELETE") {
-        const { public_id } = req.body;
+        const { public_id, category } = req.body;
 
         if (!public_id) {
           return res.status(400).json({ error: "public_id is required" });
@@ -250,8 +275,9 @@ export default async function handler(req, res) {
             resource_type: "video",
           });
 
-          // Fetch remaining videos
-          const videos = await Video.find().sort({ uploadedAt: -1 });
+          // Fetch remaining videos for the category (if provided)
+          const query = category ? { category } : {};
+          const videos = await Video.find(query).sort({ uploadedAt: -1 });
 
           res.json({
             message: "✅ Video deleted successfully",
