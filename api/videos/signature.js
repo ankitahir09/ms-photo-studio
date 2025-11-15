@@ -63,18 +63,23 @@ export default async function handler(req, res) {
 
       // Create signature
       // Cloudinary signature is SHA1 hash of sorted parameters + API secret
+      // IMPORTANT: Only include parameters that will be sent in the upload request
       // Parameters must include: api_key, timestamp, folder, resource_type
+      // Note: 'file' is NOT included in signature calculation
       const params = {
         api_key: apiKey,
-        timestamp,
+        timestamp: timestamp.toString(), // Ensure timestamp is a string
         folder: folderPath,
         resource_type: resourceType,
       };
 
+      // Sort parameters alphabetically and create string
       const paramsString = Object.keys(params)
         .sort()
         .map((key) => `${key}=${params[key]}`)
         .join("&");
+      
+      // Generate SHA1 hash with API secret appended
       const signature = crypto
         .createHash("sha1")
         .update(paramsString + process.env.CLOUDINARY_API_SECRET)

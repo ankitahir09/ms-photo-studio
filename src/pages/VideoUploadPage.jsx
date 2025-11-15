@@ -154,17 +154,28 @@ function VideoUploadPage() {
       });
 
       if (!signatureRes.ok) {
-        const error = await signatureRes.json();
-        throw new Error(error.error || "Failed to get upload signature");
+        let errorMessage = "Failed to get upload signature";
+        try {
+          const error = await signatureRes.json();
+          // Fix React Error #31: Ensure error is a string
+          errorMessage = error?.error 
+            ? (typeof error.error === 'string' ? error.error : String(error.error))
+            : errorMessage;
+        } catch (parseErr) {
+          errorMessage = `Failed to get signature: ${signatureRes.status} ${signatureRes.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const { signature, cloudName, apiKey, folder } = await signatureRes.json();
 
       // Step 2: Upload directly to Cloudinary
+      // IMPORTANT: FormData fields must match the signature parameters exactly
+      // The order doesn't matter, but all signed parameters must be included
       const cloudinaryFormData = new FormData();
       cloudinaryFormData.append("file", video);
       cloudinaryFormData.append("api_key", apiKey);
-      cloudinaryFormData.append("timestamp", timestamp);
+      cloudinaryFormData.append("timestamp", timestamp.toString()); // Ensure it's a string
       cloudinaryFormData.append("signature", signature);
       cloudinaryFormData.append("folder", folder);
       cloudinaryFormData.append("resource_type", "video");
@@ -183,6 +194,11 @@ function VideoUploadPage() {
         if (xhr.status === 200) {
           try {
             const cloudinaryResult = JSON.parse(xhr.responseText);
+
+            // Validate Cloudinary response
+            if (!cloudinaryResult.public_id || !cloudinaryResult.secure_url) {
+              throw new Error("Invalid response from Cloudinary upload");
+            }
 
             // Step 3: Save video URL to MongoDB
             const saveRes = await fetch("/api/videos/save", {
@@ -212,22 +228,46 @@ function VideoUploadPage() {
               const fileInput = document.getElementById("videoInput");
               if (fileInput) fileInput.value = "";
             } else {
-              throw new Error(saveData.error || "Failed to save video");
+              // Fix React Error #31: Ensure error is a string
+              const errorMsg = saveData?.error 
+                ? (typeof saveData.error === 'string' ? saveData.error : String(saveData.error))
+                : "Failed to save video";
+              throw new Error(errorMsg);
             }
           } catch (err) {
             console.error("Save error:", err);
+            // Fix React Error #31: Ensure error message is always a string
+            const errorMsg = err?.message 
+              ? (typeof err.message === 'string' ? err.message : String(err.message))
+              : "Upload succeeded but failed to save. Please try again.";
             setMessage({
               type: "error",
-              text: err.message || "Upload succeeded but failed to save. Please try again.",
+              text: errorMsg,
             });
           }
         } else {
+          // Handle Cloudinary error response
           let errorMessage = "Upload failed. Please try again.";
           try {
-            const error = JSON.parse(xhr.responseText);
-            errorMessage = error.error || errorMessage;
-          } catch {
-            // If response is not JSON, use default message
+            const responseText = xhr.responseText;
+            if (responseText) {
+              const error = JSON.parse(responseText);
+              // Fix React Error #31: Ensure error is a string
+              errorMessage = error?.error 
+                ? (typeof error.error === 'string' ? error.error : String(error.error))
+                : error?.message
+                ? (typeof error.message === 'string' ? error.message : String(error.message))
+                : errorMessage;
+            }
+          } catch (parseErr) {
+            // If response is not JSON, use status-based message
+            if (xhr.status === 401) {
+              errorMessage = "Unauthorized: Invalid Cloudinary credentials or signature";
+            } else if (xhr.status === 400) {
+              errorMessage = "Bad request: Invalid upload parameters";
+            } else {
+              errorMessage = `Upload failed with status ${xhr.status}`;
+            }
           }
           setMessage({
             type: "error",
@@ -254,9 +294,13 @@ function VideoUploadPage() {
       xhr.send(cloudinaryFormData);
     } catch (err) {
       console.error("Upload error:", err);
+      // Fix React Error #31: Ensure error message is always a string
+      const errorMsg = err?.message 
+        ? (typeof err.message === 'string' ? err.message : String(err.message))
+        : (err?.toString ? err.toString() : "Upload failed. Please try again.");
       setMessage({
         type: "error",
-        text: err.message || "Upload failed. Please try again.",
+        text: errorMsg,
       });
       setUploading(false);
       setUploadProgress(0);
@@ -286,11 +330,19 @@ function VideoUploadPage() {
         setUploadedVideos(data.videos || []);
         setMessage({ type: "success", text: "Video deleted successfully" });
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to delete video" });
+        // Fix React Error #31: Ensure error is a string
+        const errorMsg = data?.error 
+          ? (typeof data.error === 'string' ? data.error : String(data.error))
+          : "Failed to delete video";
+        setMessage({ type: "error", text: errorMsg });
       }
     } catch (err) {
       console.error("Delete error:", err);
-      setMessage({ type: "error", text: "Failed to delete video" });
+      // Fix React Error #31: Ensure error message is always a string
+      const errorMsg = err?.message 
+        ? (typeof err.message === 'string' ? err.message : String(err.message))
+        : "Failed to delete video";
+      setMessage({ type: "error", text: errorMsg });
     }
   };
 
