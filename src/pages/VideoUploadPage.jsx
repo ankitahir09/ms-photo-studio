@@ -138,11 +138,37 @@ function VideoUploadPage() {
     setUploadProgress(0);
     setMessage({ type: "", text: "" });
 
-    const formData = new FormData();
-    formData.append("video", video);
-    formData.append("category", category);
-
     try {
+      // Step 1: Get Cloudinary upload signature from backend
+      const timestamp = Math.round(new Date().getTime() / 1000);
+      const signatureRes = await fetch("/api/videos/signature", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          timestamp,
+          folder: "murlidhar-studio/videos",
+        }),
+      });
+
+      if (!signatureRes.ok) {
+        const error = await signatureRes.json();
+        throw new Error(error.error || "Failed to get upload signature");
+      }
+
+      const { signature, cloudName, apiKey, folder } = await signatureRes.json();
+
+      // Step 2: Upload directly to Cloudinary
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append("file", video);
+      cloudinaryFormData.append("api_key", apiKey);
+      cloudinaryFormData.append("timestamp", timestamp);
+      cloudinaryFormData.append("signature", signature);
+      cloudinaryFormData.append("folder", folder);
+      cloudinaryFormData.append("resource_type", "video");
+
       const xhr = new XMLHttpRequest();
 
       // Track upload progress
@@ -153,21 +179,59 @@ function VideoUploadPage() {
         }
       });
 
-      xhr.addEventListener("load", () => {
+      xhr.addEventListener("load", async () => {
         if (xhr.status === 200) {
-          const data = JSON.parse(xhr.responseText);
-          setMessage({ type: "success", text: data.message || "Upload Complete" });
-          setVideo(null);
-          setUploadProgress(0);
-          setUploadedVideos(data.videos || []);
-          // Reset file input
-          const fileInput = document.getElementById("videoInput");
-          if (fileInput) fileInput.value = "";
+          try {
+            const cloudinaryResult = JSON.parse(xhr.responseText);
+
+            // Step 3: Save video URL to MongoDB
+            const saveRes = await fetch("/api/videos/save", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                public_id: cloudinaryResult.public_id,
+                url: cloudinaryResult.secure_url,
+                category,
+              }),
+            });
+
+            const saveData = await saveRes.json();
+
+            if (saveRes.ok && saveData.success) {
+              setMessage({
+                type: "success",
+                text: saveData.message || "✅ Video uploaded successfully",
+              });
+              setVideo(null);
+              setUploadProgress(0);
+              setUploadedVideos(saveData.videos || []);
+              // Reset file input
+              const fileInput = document.getElementById("videoInput");
+              if (fileInput) fileInput.value = "";
+            } else {
+              throw new Error(saveData.error || "Failed to save video");
+            }
+          } catch (err) {
+            console.error("Save error:", err);
+            setMessage({
+              type: "error",
+              text: err.message || "Upload succeeded but failed to save. Please try again.",
+            });
+          }
         } else {
-          const error = JSON.parse(xhr.responseText);
+          let errorMessage = "Upload failed. Please try again.";
+          try {
+            const error = JSON.parse(xhr.responseText);
+            errorMessage = error.error || errorMessage;
+          } catch {
+            // If response is not JSON, use default message
+          }
           setMessage({
             type: "error",
-            text: error.error || "Upload failed. Please try again.",
+            text: errorMessage,
           });
         }
         setUploading(false);
@@ -182,14 +246,17 @@ function VideoUploadPage() {
         setUploadProgress(0);
       });
 
-      xhr.open("POST", "/api/videos");
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-      xhr.send(formData);
+      // Upload to Cloudinary
+      xhr.open(
+        "POST",
+        `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
+      );
+      xhr.send(cloudinaryFormData);
     } catch (err) {
       console.error("Upload error:", err);
       setMessage({
         type: "error",
-        text: "Upload failed. Please try again.",
+        text: err.message || "Upload failed. Please try again.",
       });
       setUploading(false);
       setUploadProgress(0);

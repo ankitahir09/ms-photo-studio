@@ -10,6 +10,7 @@ function UploadPage() {
   const [category, setCategory] = useState("homeBg");
   const [uploadedImages, setUploadedImages] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const navigate = useNavigate();
 
   // Helper to check token expiration
@@ -90,6 +91,7 @@ function UploadPage() {
     }
 
     setUploading(true);
+    setUploadProgress(0);
     const formData = new FormData();
 
     for (let img of images) {
@@ -113,17 +115,46 @@ function UploadPage() {
 
     formData.append("category", category);
 
-    const res = await fetch(`/api/images`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
+    try {
+      const xhr = new XMLHttpRequest();
 
-    const data = await res.json();
-    alert(data.message || "Upload Complete");
-    setImages([]);
-    setUploading(false);
-    setUploadedImages(data.images || []);
+      // Track upload progress
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          setUploadProgress(percentComplete);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          alert(data.message || "Upload Complete");
+          setImages([]);
+          setUploadProgress(0);
+          setUploadedImages(data.images || []);
+        } else {
+          const error = JSON.parse(xhr.responseText);
+          alert(error.error || "Upload failed. Please try again.");
+        }
+        setUploading(false);
+      });
+
+      xhr.addEventListener("error", () => {
+        alert("Network error. Please check your connection and try again.");
+        setUploading(false);
+        setUploadProgress(0);
+      });
+
+      xhr.open("POST", "/api/images");
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.send(formData);
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed. Please try again.");
+      setUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const handleDeleteUploaded = async (public_id) => {
@@ -207,8 +238,19 @@ function UploadPage() {
             id="fileInput"
             className="block my-2"
           />
+          {uploading && (
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+              <p className="text-sm text-gray-600 mt-1 text-center">
+                Uploading... {Math.round(uploadProgress)}%
+              </p>
+            </div>
+          )}
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
             onClick={handleUpload}
             disabled={uploading}
           >
