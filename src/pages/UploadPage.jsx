@@ -54,7 +54,7 @@ function UploadPage() {
 
   const fetchImages = async () => {
     try {
-      const res = await fetchWithRetry(`/api/images/images?category=${category}`, {
+      const res = await fetchWithRetry(`/api/images?category=${category}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -113,7 +113,7 @@ function UploadPage() {
 
     formData.append("category", category);
 
-    const res = await fetch(`/api/upload/upload`, {
+    const res = await fetch(`/api/images`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
@@ -130,8 +130,8 @@ function UploadPage() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const res = await fetch(`/api/delete-image`, {
-      method: "POST",
+    const res = await fetch(`/api/images`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -158,8 +158,8 @@ function UploadPage() {
       return;
     }
 
-    await fetch(`/api/update-order`, {
-      method: "POST",
+    await fetch(`/api/images`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

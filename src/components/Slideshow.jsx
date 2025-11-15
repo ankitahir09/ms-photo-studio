@@ -29,7 +29,7 @@ useEffect(() => {
     setError(null);
     try {
       const base = getApiBaseUrl();
-      const res = await fetchWithRetry(`${base}/api/images/images?category=homeBg`, {
+      const res = await fetchWithRetry(`${base}/api/images?category=homeBg`, {
         headers: { Accept: "application/json" },
         credentials: "omit",
       });

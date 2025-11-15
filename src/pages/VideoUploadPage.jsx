@@ -53,7 +53,7 @@ function VideoUploadPage() {
 
     const fetchVideos = async () => {
       try {
-        const res = await fetchWithRetry(`/api/videos/videos`, {
+        const res = await fetchWithRetry(`/api/videos`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -180,7 +180,7 @@ function VideoUploadPage() {
         setUploadProgress(0);
       });
 
-      xhr.open("POST", "/api/upload/video");
+      xhr.open("POST", "/api/videos");
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.send(formData);
     } catch (err) {
@@ -203,8 +203,8 @@ function VideoUploadPage() {
     }
 
     try {
-      const res = await fetch(`/api/delete-video`, {
-        method: "POST",
+      const res = await fetch(`/api/videos`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

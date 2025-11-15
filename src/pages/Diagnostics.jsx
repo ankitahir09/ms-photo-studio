@@ -7,8 +7,8 @@ function Diagnostics() {
 
   const tests = [
     { id: "health", label: "API Health", path: "/api/health" },
-    { id: "homeBg", label: "Images: homeBg", path: "/api/images/homeBg" },
-    { id: "child", label: "Images: childphotos", path: "/api/images/childphotos" },
+    { id: "homeBg", label: "Images: homeBg", path: "/api/images?category=homeBg" },
+    { id: "child", label: "Images: childphotos", path: "/api/images?category=childphotos" },
   ];
 
   async function runTests() {
