@@ -55,41 +55,53 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Timestamp is required" });
       }
 
-      // Build parameters for signature
-      // Note: api_key must be included in signature calculation
+      // Validate environment variables
       const apiKey = process.env.CLOUDINARY_API_KEY;
+      const apiSecret = process.env.CLOUDINARY_API_SECRET;
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+
+      if (!apiKey || !apiSecret || !cloudName) {
+        return res.status(500).json({ 
+          error: "Cloudinary credentials not configured. Please check environment variables." 
+        });
+      }
+
       const folderPath = folder || "murlidhar-studio/videos";
       const resourceType = "video";
 
-      // Create signature
+      // Create signature for Cloudinary signed uploads
       // Cloudinary signature is SHA1 hash of sorted parameters + API secret
       // IMPORTANT: Only include parameters that will be sent in the upload request
       // Parameters must include: api_key, timestamp, folder, resource_type
       // Note: 'file' is NOT included in signature calculation
-      // FIX: Ensure timestamp is a number (not string) for signature calculation
+      // CRITICAL FIX: All values must be strings in the signature string
       const params = {
-        api_key: apiKey,
-        timestamp: timestamp, // Keep as number for signature calculation
-        folder: folderPath,
-        resource_type: resourceType,
+        api_key: String(apiKey),
+        timestamp: String(timestamp), // Convert to string for signature
+        folder: String(folderPath),
+        resource_type: String(resourceType),
       };
 
       // Sort parameters alphabetically and create string
-      // FIX: Convert all values to strings when building the signature string
+      // This exact format is required by Cloudinary
       const paramsString = Object.keys(params)
         .sort()
-        .map((key) => `${key}=${String(params[key])}`)
+        .map((key) => `${key}=${params[key]}`)
         .join("&");
       
       // Generate SHA1 hash with API secret appended
+      // This is the Cloudinary signature algorithm
       const signature = crypto
         .createHash("sha1")
-        .update(paramsString + process.env.CLOUDINARY_API_SECRET)
+        .update(paramsString + apiSecret)
         .digest("hex");
       
-      // Debug logging (remove in production)
-      console.log("Signature params:", paramsString);
-      console.log("Generated signature:", signature);
+      // Debug logging (check server logs in production)
+      console.log("=== Cloudinary Signature Debug ===");
+      console.log("Params string:", paramsString);
+      console.log("Signature (first 10 chars):", signature.substring(0, 10) + "...");
+      console.log("Cloud name:", cloudName);
+      console.log("API key:", apiKey);
 
       res.json({
         signature,

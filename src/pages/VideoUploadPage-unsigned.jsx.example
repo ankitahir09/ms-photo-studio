@@ -1,0 +1,145 @@
+// === EXAMPLE: Unsigned Upload Preset Implementation ===
+// This is an example of how to use unsigned upload preset
+// To use this, update VideoUploadPage.jsx to use this flow instead
+
+const handleUploadUnsigned = async () => {
+  if (!video) {
+    setMessage({ type: "error", text: "Please select a video file." });
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem("token");
+    navigate("/admin");
+    return;
+  }
+
+  setUploading(true);
+  setUploadProgress(0);
+  setMessage({ type: "", text: "" });
+
+  try {
+    // Step 1: Get upload preset from backend
+    const presetRes = await fetch("/api/videos/signature-unsigned", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        folder: "murlidhar-studio/videos",
+      }),
+    });
+
+    if (!presetRes.ok) {
+      const error = await presetRes.json();
+      throw new Error(error.error || "Failed to get upload preset");
+    }
+
+    const { cloudName, uploadPreset, folder } = await presetRes.json();
+
+    // Step 2: Upload directly to Cloudinary using unsigned preset
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append("file", video);
+    cloudinaryFormData.append("upload_preset", uploadPreset); // This is the key for unsigned uploads
+    cloudinaryFormData.append("folder", folder);
+    cloudinaryFormData.append("resource_type", "video");
+
+    const xhr = new XMLHttpRequest();
+
+    // Track upload progress
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        const percentComplete = (e.loaded / e.total) * 100;
+        setUploadProgress(percentComplete);
+      }
+    });
+
+    xhr.addEventListener("load", async () => {
+      if (xhr.status === 200) {
+        try {
+          const cloudinaryResult = JSON.parse(xhr.responseText);
+
+          if (!cloudinaryResult.public_id || !cloudinaryResult.secure_url) {
+            throw new Error("Invalid response from Cloudinary upload");
+          }
+
+          // Step 3: Save video URL to MongoDB
+          const saveRes = await fetch("/api/videos/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              public_id: cloudinaryResult.public_id,
+              url: cloudinaryResult.secure_url,
+              category,
+            }),
+          });
+
+          const saveData = await saveRes.json();
+
+          if (saveRes.ok && saveData.success) {
+            setMessage({
+              type: "success",
+              text: saveData.message || "✅ Video uploaded successfully",
+            });
+            setVideo(null);
+            setUploadProgress(0);
+            setUploadedVideos(saveData.videos || []);
+            const fileInput = document.getElementById("videoInput");
+            if (fileInput) fileInput.value = "";
+          } else {
+            throw new Error(saveData.error || "Failed to save video");
+          }
+        } catch (err) {
+          console.error("Save error:", err);
+          setMessage({
+            type: "error",
+            text: err.message || "Upload succeeded but failed to save. Please try again.",
+          });
+        }
+      } else {
+        let errorMessage = "Upload failed. Please try again.";
+        try {
+          const error = JSON.parse(xhr.responseText);
+          errorMessage = error.error || error.message || errorMessage;
+        } catch {
+          errorMessage = `Upload failed with status ${xhr.status}`;
+        }
+        setMessage({
+          type: "error",
+          text: errorMessage,
+        });
+      }
+      setUploading(false);
+    });
+
+    xhr.addEventListener("error", () => {
+      setMessage({
+        type: "error",
+        text: "Network error. Please check your connection and try again.",
+      });
+      setUploading(false);
+      setUploadProgress(0);
+    });
+
+    // Upload to Cloudinary
+    xhr.open(
+      "POST",
+      `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`
+    );
+    xhr.send(cloudinaryFormData);
+  } catch (err) {
+    console.error("Upload error:", err);
+    setMessage({
+      type: "error",
+      text: err.message || "Upload failed. Please try again.",
+    });
+    setUploading(false);
+    setUploadProgress(0);
+  }
+};
+

@@ -172,23 +172,25 @@ function VideoUploadPage() {
       // Step 2: Upload directly to Cloudinary
       // IMPORTANT: FormData fields must match the signature parameters exactly
       // The order doesn't matter, but all signed parameters must be included
-      // FIX: Use the timestamp from the response (as string) to match signature
+      // CRITICAL: All parameter values must be strings in FormData
       const cloudinaryFormData = new FormData();
       cloudinaryFormData.append("file", video);
-      cloudinaryFormData.append("api_key", apiKey);
-      cloudinaryFormData.append("timestamp", timestamp.toString()); // Must be string in FormData
-      cloudinaryFormData.append("signature", signature);
-      cloudinaryFormData.append("folder", folder);
-      cloudinaryFormData.append("resource_type", resource_type || "video");
+      cloudinaryFormData.append("api_key", String(apiKey)); // Ensure string
+      cloudinaryFormData.append("timestamp", String(timestamp)); // Must be string
+      cloudinaryFormData.append("signature", String(signature)); // Ensure string
+      cloudinaryFormData.append("folder", String(folder)); // Ensure string
+      cloudinaryFormData.append("resource_type", String(resource_type || "video")); // Ensure string
       
-      // Debug: Log what we're sending (remove in production)
-      console.log("Upload params:", {
-        api_key: apiKey,
-        timestamp: timestamp.toString(),
-        signature: signature.substring(0, 10) + "...", // Only show first 10 chars
-        folder,
-        resource_type: resource_type || "video",
-      });
+      // Debug: Log what we're sending (check browser console)
+      console.log("=== Cloudinary Upload Debug ===");
+      console.log("Cloud name:", cloudName);
+      console.log("API key:", apiKey);
+      console.log("Timestamp:", timestamp.toString());
+      console.log("Signature (first 10):", signature.substring(0, 10) + "...");
+      console.log("Folder:", folder);
+      console.log("Resource type:", resource_type || "video");
+      console.log("File name:", video.name);
+      console.log("File size:", (video.size / 1024 / 1024).toFixed(2), "MB");
 
       const xhr = new XMLHttpRequest();
 
