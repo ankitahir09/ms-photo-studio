@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://murlidharstudio.com/sitemap.xml
+
+# Disallow admin and upload pages
+Disallow: /admin
+Disallow: /upload
+
+# Allow all other pages
+Allow: /
+Allow: /prewed
+Allow: /weddingphotos
+Allow: /engagephotos
+Allow: /kidsphotography
+Allow: /maternityshoot
+Allow: /kidvideos
+Allow: /cinvideos
+Allow: /prewedvideos
+Allow: /modellingshoot
+Allow: /contactus
+Allow: /workwithus

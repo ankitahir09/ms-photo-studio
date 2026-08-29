@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-100: #f4f4f5;
+  --color-brand-200: #e4e4e7;
+  --color-brand-500: #71717a;
+  --color-brand-900: #18181b;
+  --color-gold-600: #e9d39e;
+  --color-gold-700: #d9c099;
+  --color-accent: #000000;
+  
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  
+  /* Fallback definitions for old classnames */
+  --font-abril: var(--font-outfit);
+  --font-lobster: var(--font-outfit);
+  --font-caveat: var(--font-inter);
+  --font-taviraj: var(--font-inter);
+  --font-bebas: var(--font-outfit);
+  --font-martel: var(--font-inter);
+  --font-monda: var(--font-inter);
+  --font-sacramento: var(--font-inter);
+  --font-great-vibes: var(--font-inter);
+  --font-cormorant: var(--font-outfit);
+  --font-nunito: var(--font-inter);
+  --font-love-light: var(--font-inter);
+  --font-roboto: var(--font-inter);
+}
+
+body {
+  scroll-behavior: smooth;
+  background-color: #ffffff;
+  color: #18181b;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: #18181b;
+  color: #ffffff;
+}
+
+/* Custom Swiper pagination styles */
+.custom-swiper .swiper-pagination {
+  position: static;
+  padding-top: 2rem;
+}
+
+.custom-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #d4d4d8;
+  opacity: 1;
+  margin: 0 4px;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+}
+
+.custom-swiper .swiper-pagination-bullet-active {
+  background: #18181b;
+  width: 24px;
+}
+
+/* Typography classes for backward compatibility */
+.abril-fatface-regular { font-family: var(--font-display); font-weight: 500; }
+.lobster-two-regular { font-family: var(--font-display); font-weight: 500; }
+.lobster-two-bold { font-family: var(--font-display); font-weight: 700; }
+.caveat { font-family: var(--font-sans); font-weight: 400; font-style: italic; }
+.cormorant { font-family: var(--font-display); font-weight: 600; }
+.nunito-sans { font-family: var(--font-sans); font-weight: 400; }
+
+.text-shadow {
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
