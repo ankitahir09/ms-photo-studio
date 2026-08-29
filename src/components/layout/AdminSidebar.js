@@ -21,7 +21,11 @@ export default function AdminSidebar() {
   };
 
   const navItems = [
-    { name: "Analytics Dashboard", href: "/upload?tab=dashboard", tabKey: "dashboard" },
+    {
+      name: "Analytics Dashboard",
+      href: "/upload?tab=dashboard",
+      tabKey: "dashboard",
+    },
     { name: "Images Upload", href: "/upload?tab=images", tabKey: "images" },
     { name: "Video Upload", href: "/upload?tab=videos", tabKey: "videos" },
   ];
@@ -38,8 +42,9 @@ export default function AdminSidebar() {
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {navItems.map((item) => {
           const currentTab = searchParams.get("tab") || "dashboard";
-          const isActive = mounted && pathname === "/upload" && currentTab === item.tabKey;
-          
+          const isActive =
+            mounted && pathname === "/upload" && currentTab === item.tabKey;
+
           return (
             <Link
               key={item.name}

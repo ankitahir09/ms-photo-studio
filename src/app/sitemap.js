@@ -1,16 +1,16 @@
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://murlidharstudio.in';
 
-  // Get dynamic categories
+  // Get dynamic categories directly from DB or fallback
   let categories = [];
   try {
-    const res = await fetch(`${baseUrl}/api/categories`, { cache: 'no-store' });
-    const data = await res.json();
-    if (data.success) {
-      categories = data.categories.filter(c => c.isActive);
-    }
+    const { connectToDatabase } = await import("@/lib/db");
+    await connectToDatabase();
+    const CategoryModel = (await import("@/lib/models/Category")).default;
+    const dbCategories = await CategoryModel.find({ isActive: true }).lean();
+    categories = JSON.parse(JSON.stringify(dbCategories));
   } catch (error) {
-    console.error("Failed to fetch categories for sitemap");
+    console.error("Failed to query categories for sitemap:", error.message);
   }
 
   const dynamicRoutes = categories.map((cat) => ({
