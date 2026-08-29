@@ -1,0 +1,287 @@
+/* #root {
+
+} */
+
+body {
+  scroll-behavior: smooth;
+  background-color: #f9f7f1;
+}
+
+/* Target pagination bullets inside your custom swiper */
+
+.custom-swiper .swiper-pagination {
+  position: static;
+  padding-top: 10px;
+}
+/* .custom-swiper .swiper-pagination-bullets {
+  bottom: 30px !important;
+} 
+*/
+
+.custom-swiper .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: #bebebe;
+  opacity: 1;
+  margin: 0 6px;
+  transition: transform 0.3s ease;
+}
+
+.custom-swiper .swiper-pagination-bullet-active {
+  background: #d4af37; /* e.g., Tailwind amber-500 */
+  transform: scale(1.3);
+}
+
+.abril-fatface-regular {
+  font-family: "Abril Fatface", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lobster-two-regular {
+  font-family: "Lobster Two", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lobster-two-bold {
+  font-family: "Lobster Two", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lobster-two-regular-italic {
+  font-family: "Lobster Two", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.lobster-two-bold-italic {
+  font-family: "Lobster Two", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.caveat {
+  font-family: "Caveat", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.taviraj-thin {
+  font-family: "Taviraj", serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.taviraj-extralight {
+  font-family: "Taviraj", serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.taviraj-light {
+  font-family: "Taviraj", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.taviraj-regular {
+  font-family: "Taviraj", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.taviraj-medium {
+  font-family: "Taviraj", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.taviraj-semibold {
+  font-family: "Taviraj", serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.taviraj-bold {
+  font-family: "Taviraj", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.taviraj-extrabold {
+  font-family: "Taviraj", serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.taviraj-black {
+  font-family: "Taviraj", serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.taviraj-thin-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.taviraj-extralight-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.taviraj-light-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.taviraj-regular-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.taviraj-medium-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.taviraj-semibold-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.taviraj-bold-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.taviraj-extrabold-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.taviraj-black-italic {
+  font-family: "Taviraj", serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  color: black;
+  font-size: 1.8rem;
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+  font-style: normal;
+}
+
+.martel-extralight {
+  font-family: "Martel", serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.martel-light {
+  font-family: "Martel", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.martel-regular {
+  font-family: "Martel", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.martel-semibold {
+  font-family: "Martel", serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.martel-bold {
+  font-family: "Martel", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.martel-extrabold {
+  font-family: "Martel", serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.martel-black {
+  font-family: "Martel", serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.monda {
+  font-family: "Monda", sans-serif;
+  color: rgb(52, 52, 52);
+  font-size: 1.5rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.6rem;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.sacramento-regular {
+  font-family: "Sacramento", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.great-vibes-regular {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cormorant {
+  font-family: "Cormorant", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.nunito-sans {
+  font-family: "Nunito Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100, "YTLC" 500;
+}
+
+.lovelight {
+  font-family: "Love Light", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.text-shadow{
+  text-shadow: 0.5px 0.5px 2px;
+}
+
+
+.roboto {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
