@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+import CarouselManager from "@/components/admin/CarouselManager";
 import ImageUploader from "@/components/admin/ImageUploader";
 import VideoUploader from "@/components/admin/VideoUploader";
 
@@ -31,6 +32,7 @@ function UploadContent() {
       </div>
 
       {activeTab === "dashboard" && <AnalyticsDashboard />}
+      {activeTab === "carousel" && <CarouselManager />}
       {activeTab === "images" && <ImageUploader />}
       {activeTab === "videos" && <VideoUploader />}
     </div>

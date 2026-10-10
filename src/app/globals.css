@@ -42,8 +42,13 @@ body {
 
 /* Custom Swiper pagination styles */
 .custom-swiper .swiper-pagination {
-  position: static;
-  padding-top: 2rem;
+  bottom: 1.25rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 10;
 }
 
 .custom-swiper .swiper-pagination-bullet {

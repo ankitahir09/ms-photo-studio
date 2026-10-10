@@ -26,8 +26,13 @@ export default function AdminSidebar() {
       href: "/upload?tab=dashboard",
       tabKey: "dashboard",
     },
+    {
+      name: "Carousel Photos",
+      href: "/upload?tab=carousel",
+      tabKey: "carousel",
+    },
     { name: "Images Upload", href: "/upload?tab=images", tabKey: "images" },
-    { name: "Video Upload", href: "/upload?tab=videos", tabKey: "videos" },
+    { name: "Videos Management", href: "/upload?tab=videos", tabKey: "videos" },
   ];
 
   return (

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import CategoryModel from "@/lib/models/Category";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -88,6 +89,8 @@ export async function PUT(req) {
     const updated = await CategoryModel.findByIdAndUpdate(_id, updateData, {
       new: true,
     });
+
+    revalidatePath("/");
 
     return NextResponse.json({ success: true, category: updated });
   } catch (error) {

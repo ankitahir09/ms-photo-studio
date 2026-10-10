@@ -2,6 +2,12 @@ import HeroSlideshow from "@/components/home/HeroSlideshow";
 import CategoryCarousel from "@/components/home/CategoryCarousel";
 import AboutSection from "@/components/home/AboutSection";
 
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Murlidhar Studio",
+};
+
 // For Next.js 16 Server Components
 async function getHomeData() {
   await import("@/lib/db").then((m) => m.connectToDatabase());
