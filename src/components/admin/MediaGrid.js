@@ -117,7 +117,8 @@ export default function MediaGrid({ category, type = "image" }) {
                       
                       <button
                         onClick={() => handleDelete(item._id)}
-                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10"
+                        aria-label="Delete media item"
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 shadow-sm"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -133,7 +134,7 @@ export default function MediaGrid({ category, type = "image" }) {
                         </div>
                       )}
 
-                      <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 text-white text-xs rounded opacity-0 group-hover:opacity-100 backdrop-blur-sm pointer-events-none z-10">
+                      <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 text-white text-xs rounded opacity-90 sm:opacity-0 sm:group-hover:opacity-100 backdrop-blur-sm pointer-events-none z-10">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
                         </svg>

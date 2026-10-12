@@ -177,17 +177,17 @@ export default function VideoUploader() {
   return (
     <div className="space-y-8">
       {/* Upload Card */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-gray-100">
           <div>
-            <h2 className="text-2xl font-bold font-cormorant text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold font-cormorant text-gray-900">
               Upload New Video
             </h2>
             <p className="text-xs text-gray-500 font-nunito mt-1">
               Videos will be saved directly under the dedicated &quot;videos&quot; folder in Cloudinary.
             </p>
           </div>
-          <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-100">
+          <span className="self-start sm:self-auto px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-100">
             Max 100MB
           </span>
         </div>
@@ -294,7 +294,7 @@ export default function VideoUploader() {
             <button
               type="submit"
               disabled={uploading || !file}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-nunito font-semibold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="w-full sm:w-auto px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-nunito font-semibold shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-center"
             >
               {uploading ? (
                 <>

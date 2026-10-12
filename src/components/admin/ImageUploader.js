@@ -83,7 +83,7 @@ export default function ImageUploader() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
       <h2 className="text-xl font-semibold mb-6">Upload Images</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -105,11 +105,11 @@ export default function ImageUploader() {
           </select>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Select Files
           </label>
-          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-[var(--color-gold-500)] transition-colors">
+          <div className="mt-1 flex justify-center px-4 sm:px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-[var(--color-gold-500)] transition-colors">
             <div className="space-y-1 text-center">
               <svg
                 className="mx-auto h-12 w-12 text-gray-400"
@@ -155,9 +155,9 @@ export default function ImageUploader() {
         </div>
       </div>
 
-      <div className="flex items-center justify-end">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-4">
         {uploading && (
-          <div className="w-full max-w-xs mr-4 bg-gray-200 rounded-full h-2.5">
+          <div className="w-full sm:max-w-xs bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-[var(--color-gold-500)] h-2.5 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
@@ -167,7 +167,7 @@ export default function ImageUploader() {
         <button
           onClick={handleUpload}
           disabled={uploading || files.length === 0}
-          className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#111] hover:bg-[#222] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#111] hover:bg-[#222] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed text-center"
         >
           {uploading ? `Uploading ${progress}%` : "Upload Files"}
         </button>
