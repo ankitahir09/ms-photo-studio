@@ -52,12 +52,12 @@ export default function AdminLayout({ children }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div>
-              <span className="font-cormorant font-bold text-lg text-[var(--color-gold-500)]">
-                Admin Panel
+            <div className="flex flex-col">
+              <span className="font-cormorant font-bold text-base sm:text-lg text-[var(--color-gold-500)] leading-tight">
+                Murlidhar Studio
               </span>
-              <span className="hidden sm:inline-block ml-2 text-xs text-gray-400">
-                • Murlidhar Studio
+              <span className="text-[10px] text-gray-400 font-sans tracking-wide uppercase leading-tight">
+                Admin Panel
               </span>
             </div>
           </div>

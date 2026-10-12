@@ -87,7 +87,7 @@ export default function Navbar() {
             className="relative z-50 flex items-center gap-2 group"
           >
             <span
-              className={`font-display font-bold tracking-widest uppercase text-base hidden sm:block ${textColor}`}
+              className={`font-display font-bold tracking-wider sm:tracking-widest uppercase text-xs sm:text-base block ${textColor}`}
             >
               Murlidhar Studio
             </span>

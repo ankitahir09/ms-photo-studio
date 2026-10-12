@@ -82,7 +82,7 @@ export default function ContactUsPage() {
                   Call Us
                 </h3>
                 <p className="text-gray-600 font-nunito mt-1">
-                  +91 9979912805
+                  +91 8878887826
                   <br />
                   murlidharstudio28@gmail.com
                 </p>
