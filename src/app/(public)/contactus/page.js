@@ -54,7 +54,8 @@ export default function ContactUsPage() {
                 <p className="text-gray-600 font-nunito mt-1">
                   413/D, Old Lakda Bazar,
                   <br />
-                  Laxmi Tokiz to Khatri bazar Road, Nr. Ganga Naka, Anjar, Gujarat 370110
+                  Laxmi Tokiz to Khatri bazar Road, Nr. Ganga Naka, Anjar,
+                  Gujarat 370110
                 </p>
               </div>
             </div>
@@ -91,7 +92,7 @@ export default function ContactUsPage() {
             <div className="h-[300px] rounded-xl overflow-hidden shadow-lg border border-gray-100 relative grayscale hover:grayscale-0 transition-all duration-500">
               {/* Replace with actual map embed */}
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117565.65406080352!2d69.58498418047976!3d23.25056770246283!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39511e403d523bf1%3A0x6e9f16c2718e2448!2sBhuj%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14622.64766054389!2d72.34947199999998!3d23.616455!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3950c7a71fd3f767%3A0xf468931c90f24af9!2sMURLIDHAR%20STUDIO!5e0!3m2!1sen!2sin!4v1791660821173!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

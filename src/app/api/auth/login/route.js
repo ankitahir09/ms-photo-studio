@@ -16,8 +16,6 @@ export async function POST(req) {
     }
 
     await connectToDatabase();
-    const { ensureAdminUserSeeded } = await import("@/lib/adminSeeder");
-    await ensureAdminUserSeeded();
 
     // Check if the user exists
     const adminUser = await Admin.findOne({ username });

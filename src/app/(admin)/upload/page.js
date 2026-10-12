@@ -25,8 +25,8 @@ function UploadContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
-        <h1 className="text-3xl font-bold text-gray-900 font-cormorant">
+      <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-cormorant">
           Admin Dashboard
         </h1>
       </div>

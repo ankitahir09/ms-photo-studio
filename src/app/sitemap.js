@@ -1,5 +1,5 @@
 export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://murlidharstudio.in';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://murlidharstudio.com';
 
   // Get dynamic categories directly from DB or fallback
   let categories = [];

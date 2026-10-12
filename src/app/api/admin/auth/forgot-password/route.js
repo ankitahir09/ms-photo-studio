@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Admin from "@/lib/models/Admin";
-import { ensureAdminUserSeeded } from "@/lib/adminSeeder";
 import { sendOtpEmail } from "@/lib/mailer";
 
 export async function POST(req) {
@@ -18,7 +17,6 @@ export async function POST(req) {
     const cleanEmail = email.trim().toLowerCase();
 
     await connectToDatabase();
-    await ensureAdminUserSeeded();
 
     const admin = await Admin.findOne({
       $or: [

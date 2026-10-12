@@ -218,37 +218,37 @@ export default function CarouselManager() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Description */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold font-cormorant text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-bold font-cormorant text-gray-900">
             Carousel Photos Management
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
             Easily change, upload, or pick the photos displayed across the homepage carousels.
           </p>
         </div>
 
         {/* Tab switch buttons */}
-        <div className="flex bg-gray-100 p-1 rounded-lg">
+        <div className="grid grid-cols-2 bg-gray-100 p-1 rounded-xl w-full md:w-auto text-xs sm:text-sm">
           <button
             onClick={() => setActiveSubTab("categories")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+            className={`px-3 sm:px-4 py-2 font-medium rounded-lg transition-all text-center ${
               activeSubTab === "categories"
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            Selected Works Cards ({categories.length})
+            Selected Works ({categories.length})
           </button>
           <button
             onClick={() => setActiveSubTab("hero")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+            className={`px-3 sm:px-4 py-2 font-medium rounded-lg transition-all text-center ${
               activeSubTab === "hero"
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-500 hover:text-gray-900"
             }`}
           >
-            Hero Slideshow Banner
+            Hero Slideshow
           </button>
         </div>
       </div>
@@ -354,7 +354,7 @@ export default function CarouselManager() {
                         {cat.description || "Carousel card presentation photo."}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {/* Hidden file input */}
                         <input
                           type="file"
@@ -446,7 +446,7 @@ export default function CarouselManager() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                 <input
                   id="hero-file-upload"
                   type="file"
@@ -461,7 +461,7 @@ export default function CarouselManager() {
                 <button
                   onClick={handleHeroUpload}
                   disabled={heroUploading || heroFiles.length === 0}
-                  className="px-5 py-2 text-xs font-semibold rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2.5 text-xs font-semibold rounded-md bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50 transition-colors text-center shrink-0"
                 >
                   {heroUploading ? "Uploading..." : `Upload (${heroFiles.length})`}
                 </button>
